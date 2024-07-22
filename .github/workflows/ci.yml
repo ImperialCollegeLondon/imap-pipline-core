@@ -163,10 +163,11 @@ jobs:
 
         - name: Zip up the binary
           run: |
+            sudo chown -R $(whoami):$(whoami) .
+            cp pyinstaller/${{env.DIST_BINARY_FOLDER}}/${{env.APP_NAME}} .
             zip -r ${{ env.PACKAGE_NAME }}_${{ env.DIST_BINARY_FOLDER }}_v${{ env.PACKAGE_VERSION }}.zip ${{env.APP_NAME}}
-            cp ${{ env.PACKAGE_NAME }}_${{ env.DIST_BINARY_FOLDER }}_v${{ env.PACKAGE_VERSION }}.zip ..
             echo "PACKAGE_ZIP=${{ env.PACKAGE_NAME }}_${{ env.DIST_BINARY_FOLDER }}_v${{ env.PACKAGE_VERSION }}.zip" >> $GITHUB_ENV
-          working-directory: dist/pyinstaller/${{env.DIST_BINARY_FOLDER}}
+          working-directory: dist
 
         - name: Upload build artifacts
           uses: actions/upload-artifact@v4
