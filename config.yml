@@ -1,0 +1,10 @@
+source:
+  folder: tests/data/2024
+  
+work-folder: .work
+
+destination:
+  folder: output/
+  filename: result.cdf
+
+  

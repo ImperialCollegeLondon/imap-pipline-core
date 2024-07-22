@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "imap-mag"
+version = "0.1.0"
+description = "Process IMAP data"
+authors = ["alastairtree"]
+readme = "README.md"
+packages = [
+    { include = "src" },
+]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.13"
+typer = {extras = ["all"], version = "^0.7.0"}
+isort = "^5.11.4"
+pyyaml = "^6.0.1"
+typing-extensions = "^4.9.0"
+pydantic = "^2.6.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.1"
+pytest-cov = "^4.0.0"
+black = "^22.12.0"
+flake8 = "^6.0.0"
+pyinstaller = "^6.5.0"
+
+[tool.poetry.scripts]
+# can execute via poetry, e.g. `poetry run imap-mag hello world`
+imap-mag = 'src.main:app'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry-pyinstaller-plugin.scripts]
+imap-mag = { source = "src/main.py", type = "onefile", bundle = false }
+
