@@ -159,7 +159,7 @@ jobs:
                 python3 -m poetry self add poetry-pyinstaller-plugin
                 python3 -m poetry install
                 python3 -m poetry build
-                ./dist/pyinstaller/manylinux_2_36_x86_64/imap-mag hello world
+                ./dist/pyinstaller/${{env.DIST_BINARY_FOLDER}}/${{env.APP_NAME}} hello world
 
         - name: Zip up the binary
           run: |
