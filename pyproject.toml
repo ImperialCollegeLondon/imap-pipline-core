@@ -22,6 +22,8 @@ pytest-cov = "^4.0.0"
 black = "^22.12.0"
 flake8 = "^6.0.0"
 pyinstaller = "^6.5.0"
+pre-commit = "^3.7.1"
+ruff = "^0.5.4"
 
 [tool.poetry.scripts]
 # can execute via poetry, e.g. `poetry run imap-mag hello world`
@@ -34,3 +36,19 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry-pyinstaller-plugin.scripts]
 imap-mag = { source = "src/main.py", type = "onefile", bundle = false }
 
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "D",   # pydocstyle
+    "E",   # pycodestyle
+    "F",   # Pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "RUF"  # ruff
+]
+pydocstyle.convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"*" = ["D100", "D101", "D102", "D103", "D104", "D107", "E501"] # Missing docstring in public module, class, method, function, package and __init__, and line too long

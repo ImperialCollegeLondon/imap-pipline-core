@@ -1,0 +1,37 @@
+repos:
+  - repo: https://github.com/maresb/check-json5
+    rev: v1.0.0
+    hooks:
+    - id: check-json5
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-toml
+      - id: check-yaml
+      - id: check-xml
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: trailing-whitespace
+      - id: pretty-format-json
+        args: [--autofix, --indent, "4"]
+        exclude: .devcontainer/devcontainer.json
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.5
+    hooks:
+      - id: remove-crlf
+      - id: remove-tabs
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: "0.28.6"
+    hooks:
+      - id: check-github-workflows
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.5.1
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.41.0
+    hooks:
+      - id: markdownlint-fix
+        args: [--ignore, LICENSE.md]
