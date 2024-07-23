@@ -26,7 +26,7 @@
         // add the pyenv bin and poetry to the PATH for the dev user vscode
         "PATH": "/home/vscode/.pyenv/bin:/home/vscode/.local/bin:${containerEnv:PATH}"
     },
-    "postCreateCommand": "sudo chmod +x .devcontainer/env_setup.sh && pip install --user -U pre-commit && pre-commit install-hooks && pre-commit autoupdate",
+    "postCreateCommand": "pip install --user -U pre-commit && pre-commit install-hooks && pre-commit autoupdate",
     // install poetry in first startup in vscode
     "postStartCommand": "./dev-env-first-time.sh",
 
