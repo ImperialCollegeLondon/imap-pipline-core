@@ -26,6 +26,12 @@ env:
   DIST_BINARY_FOLDER: 'manylinux_2_36_x86_64'
   APP_NAME: 'imap-mag'
 jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pre-commit/action@v3.0.1
+
   build:
     strategy:
       matrix:
