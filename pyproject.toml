@@ -51,4 +51,8 @@ select = [
 pydocstyle.convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"*" = ["D100", "D101", "D102", "D103", "D104", "D107", "E501"] # Missing docstring in public module, class, method, function, package and __init__, and line too long
+# Ignore:
+#  * Missing docstring in public module, class, method, function, package and __init__
+#  * Line too long
+#  * Optional replaced as X | None
+"*" = ["D100", "D101", "D102", "D103", "D104", "D107", "E501", "UP007"]
