@@ -1,11 +1,11 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/debian
 {
-	"build": {
+    "build": {
         "dockerfile": "./Dockerfile",
         "context": "."
     },
-	"features": {
+    "features": {
         // "ghcr.io/devcontainers/features/common-utils:2":{
         //     "installZsh": "true",
         //     "username": "vscode",
@@ -13,36 +13,36 @@
         //     "userGid": "1000",
         //     "upgradePackages": "true"
         // },
-		// "ghcr.io/devcontainers/features/git:1": {
+        // "ghcr.io/devcontainers/features/git:1": {
         //     "version": "latest",
         //     "ppa": "false"
         // },
-	
+
         // allow access to the HOST docker socker for docker desktop
         "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
 
         },
 
-		// poetry also available as a dev container feature but we install it using dev-env-first-time.sh so PATH is setup
-		//"ghcr.io/devcontainers-contrib/features/poetry:2": {},
-		// uncommment act if you want to be able to run github actions locally. This needs "docker in docker" setup for devcontainer
-		//"ghcr.io/dhoeric/features/act:1": {}
-	},
-	"remoteEnv": {
-		// add the pyenv bin and poetry to the PATH for the dev user vscode
+        // poetry also available as a dev container feature but we install it using dev-env-first-time.sh so PATH is setup
+        //"ghcr.io/devcontainers-contrib/features/poetry:2": {},
+        // uncommment act if you want to be able to run github actions locally. This needs "docker in docker" setup for devcontainer
+        //"ghcr.io/dhoeric/features/act:1": {}
+    },
+    "remoteEnv": {
+        // add the pyenv bin and poetry to the PATH for the dev user vscode
         "PATH": "/home/vscode/.pyenv/bin:/home/vscode/.local/bin:${containerEnv:PATH}"
     },
     "postCreateCommand": "pip install --user -U pre-commit && pre-commit install-hooks && pre-commit autoupdate",
-	// install poetry in first startup in vscode
-	"postStartCommand": "./dev-env-first-time.sh",
+    // install poetry in first startup in vscode
+    "postStartCommand": "./dev-env-first-time.sh",
 
-	// Configure tool-specific properties.
-	"customizations": {
-		// Configure properties specific to VS Code.
-		"vscode": {
-			// Set *default* container specific settings.json values on container create.
-			"settings": {
-				// not using venvs? uncomment this
+    // Configure tool-specific properties.
+    "customizations": {
+        // Configure properties specific to VS Code.
+        "vscode": {
+            // Set *default* container specific settings.json values on container create.
+            "settings": {
+                // not using venvs? uncomment this
                 //"python.defaultInterpreterPath": "/usr/local/bin/python"
 
                 // use the active venv
@@ -55,23 +55,23 @@
                         "path": "/bin/zsh"
                     }
                 }
-			},
+            },
             "extensions": [
                 "EditorConfig.EditorConfig",
                 "ms-python.python",
                 "ms-python.black-formatter",
-				"github.vscode-github-actions",
-				"ms-azuretools.vscode-docker"
+                "github.vscode-github-actions",
+                "ms-azuretools.vscode-docker"
             ]
-		}
-	},
+        }
+    },
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": [],
 
-	// Configure tool-specific properties.
-	// "customizations": {},
+    // Configure tool-specific properties.
+    // "customizations": {},
 
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	"remoteUser": "vscode"
+    // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+    "remoteUser": "vscode"
 }

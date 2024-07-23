@@ -14,7 +14,8 @@ repos:
       - id: trailing-whitespace
       - id: pretty-format-json
         args: [--autofix, --indent, "4"]
-        exclude: .devcontainer/devcontainer.json
+        exclude: .devcontainer/devcontainer.json|.vscode/settings.json|.vscode/tasks.json
+
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.5.5
     hooks:
