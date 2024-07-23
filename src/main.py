@@ -5,14 +5,13 @@ import os
 import shutil
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import Annotated
 
 # cli
 import typer
 
 # config
 import yaml
-from typing_extensions import Annotated
 
 # app code
 from src import appConfig, appLogging, imapProcessing
@@ -22,7 +21,6 @@ globalState = {"verbose": False}
 
 
 def commandInit(config: Path) -> appConfig.AppConfig:
-
     # load and verify the config file
     if config is None:
         logging.critical("No config file")
@@ -43,7 +41,7 @@ def commandInit(config: Path) -> appConfig.AppConfig:
 
     # set up the work folder
     if not configFile.work_folder:
-        configFile.work_folder = ".work"
+        configFile.work_folder = Path(".work")
 
     if not os.path.exists(configFile.work_folder):
         logging.debug(f"Creating work folder {configFile.work_folder}")
@@ -82,13 +80,12 @@ def hello(name: str):
 # E.g  imap-mag process --config config.yml --file solo_L2_mag-rtn-ll-internal_20240210_V00.cdf
 @app.command()
 def process(
-    config: Annotated[Optional[Path], typer.Option(default=None)] = "config.yml",
+    config: Annotated[Path | None, typer.Option(default=None)] = Path("config.yml"),
     file: str = typer.Option(
         default=..., help="The file name or pattern to match for the input file"
     ),
 ):
-    """sample processing job"""
-
+    """Sample processing job."""
     # TODO: semantic logging
     # TODO: handle file system/cloud files - abstraction layer needed for files
     # TODO: move shared logic to a library
@@ -121,7 +118,8 @@ def process(
         raise typer.Abort()
 
     logging.info(
-        f"Found {len(files)} matching files. Select the most recent one: {files[0].absolute().as_posix()}"
+        f"Found {len(files)} matching files. Select the most recent one:"
+        f"{files[0].absolute().as_posix()}"
     )
 
     # copy the file to configFile.work_folder

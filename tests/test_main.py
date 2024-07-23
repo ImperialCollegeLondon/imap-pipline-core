@@ -2,7 +2,6 @@
 """Tests for `app` package."""
 # pylint: disable=redefined-outer-name
 
-
 import os
 from pathlib import Path
 

@@ -1,19 +1,17 @@
 {
     "comments": "This is for pylance extension of vscode. Remove me if you're not intending to use vscode.",
     "exclude": [
-      ".git",
-      ".github",
-      ".tox",
-      ".vscode",
-      "docs",
-      "**/__pycache__",
+        ".git",
+        ".github",
+        ".tox",
+        ".vscode",
+        "docs",
+        "**/__pycache__"
     ],
-
     "ignore": [
-      "src/oldstuff"
+        "src/oldstuff"
     ],
-
+    "pythonVersion": "3.12",
     "reportMissingImports": true,
-    "reportMissingTypeStubs": false,
-    "pythonVersion": "3.12"
-  }
+    "reportMissingTypeStubs": false
+}

@@ -1,1 +1,1 @@
-"""Top-level package for cli app"""
+"""Top-level package for cli app."""
