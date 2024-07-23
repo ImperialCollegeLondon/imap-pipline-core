@@ -97,7 +97,7 @@ jobs:
 
       - name: Get image metadata
         id: meta
-        uses: docker/metadata-action@v6
+        uses: docker/metadata-action@v5
         if: matrix.python-versions == env.PREFERED_PYTHON_VERSION
         with:
           images: ghcr.io/${{ github.repository }}
