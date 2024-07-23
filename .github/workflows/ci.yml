@@ -20,6 +20,7 @@ permissions:
   id-token: write
   contents: write
   checks: write
+  packages: write
 
 env:
   PREFERED_PYTHON_VERSION: '3.12'
