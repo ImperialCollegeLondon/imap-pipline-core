@@ -1,1 +1,1 @@
-"""Test package for  cli app"""
+"""Test package for cli app."""

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 # -------------------------------------------------------------------------------
 #                                                                               -
@@ -19,14 +18,12 @@
 import logging
 
 # Imports
-import os
 import sys
 
 
 # Logging formatter supporting colorized output
 class LogFormatter(logging.Formatter):
-
-    COLOR_CODES = {
+    COLOR_CODES = {  # noqa: RUF012
         logging.CRITICAL: "\033[1;35m",  # bright/bold magenta
         logging.ERROR: "\033[1;31m",  # bright/bold red
         logging.WARNING: "\033[1;33m",  # bright/bold yellow
@@ -37,7 +34,7 @@ class LogFormatter(logging.Formatter):
     RESET_CODE = "\033[0m"
 
     def __init__(self, color, *args, **kwargs):
-        super(LogFormatter, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.color = color
 
     def format(self, record, *args, **kwargs):
@@ -47,7 +44,7 @@ class LogFormatter(logging.Formatter):
         else:
             record.color_on = ""
             record.color_off = ""
-        return super(LogFormatter, self).format(record, *args, **kwargs)
+        return super().format(record, *args, **kwargs)
 
 
 # Set up logging
@@ -61,7 +58,6 @@ def set_up_logging(
     log_line_template,
     console_log_line_template,
 ):
-
     # Create logger
     # For simplicity, we use the root logger, i.e. call 'logging.getLogger()'
     # without name argument. This way we can simply use module methods for
@@ -79,7 +75,7 @@ def set_up_logging(
     elif console_log_output == "stderr":
         console_log_output = sys.stderr
     else:
-        print("Failed to set console output: invalid output: '%s'" % console_log_output)
+        print(f"Failed to set console output: invalid output: {console_log_output}")
         return False
     console_handler = logging.StreamHandler(console_log_output)
 
@@ -89,9 +85,7 @@ def set_up_logging(
             console_log_level.upper()
         )  # only accepts uppercase level names
     except:  # noqa: E722
-        print(
-            "Failed to set console log level: invalid level: '%s'" % console_log_level
-        )
+        print(f"Failed to set console log level: invalid level: {console_log_level}")
         return False
 
     # Create and set formatter, add console handler to logger
@@ -106,7 +100,7 @@ def set_up_logging(
     try:
         logfile_handler = logging.FileHandler(logfile_file, encoding="utf-8")
     except Exception as exception:
-        print("Failed to set up log file: %s" % str(exception))
+        print(f"Failed to set up log file: {exception!s}")
         return False
 
     # Set log file log level
@@ -115,9 +109,7 @@ def set_up_logging(
             logfile_log_level.upper()
         )  # only accepts uppercase level names
     except:  # noqa: E722
-        print(
-            "Failed to set log file log level: invalid level: '%s'" % logfile_log_level
-        )
+        print(f"Failed to set log file log level: invalid level: {logfile_log_level}")
         return False
 
     # Create and set formatter, add log file handler to logger
