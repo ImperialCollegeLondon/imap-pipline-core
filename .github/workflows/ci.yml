@@ -7,7 +7,7 @@ on:
     branches:
       - '**'
     tags:
-      - '*'
+      - 'v*'
   pull_request:
     branches:
       - '*'
@@ -102,6 +102,17 @@ jobs:
         if: matrix.python-versions == env.PREFERED_PYTHON_VERSION
         with:
           images: ghcr.io/${{ github.repository }}
+          tags: |
+            # minimal
+            type=semver,pattern={{version}}
+            # use custom value instead of git tag
+            type=semver,pattern={{version}},value=${{ env.PACKAGE_VERSION }}
+            # set latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
+            # branch event
+            type=ref,event=branch
+            # pull request event
+            type=ref,event=pr
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -112,8 +123,6 @@ jobs:
           push: true
           tags: |
             ${{ steps.meta.outputs.tags }}
-            ${{ format('{0}/{1}:{2}', github.event.repository.name, env.APP_NAME, env.PACKAGE_VERSION) }}
-            ${{ github.ref == 'refs/heads/main' && format('{0}/{1}:{2}', github.event.repository.name, env.APP_NAME, 'latest') || ''}}
 
       - name: Zip up the folder
         run: zip -r ${{ env.PACKAGE_NAME }}_python${{matrix.python-versions}}_${{ env.PACKAGE_VERSION }}.zip python${{matrix.python-versions}}
