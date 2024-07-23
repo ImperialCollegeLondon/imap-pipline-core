@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+# Pack the python code into a distributable format tag.gz & .whl
+
 # if the folder ".venv" exists
 if [ -d ".venv" ]; then
     #load the python virtual environment
