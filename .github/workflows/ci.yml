@@ -213,10 +213,10 @@ jobs:
             image: ${{ matrix.image }}
             options: -v ${{ github.workspace }}:/src/
             run: |
-                python3 -m pip install poetry
-                python3 -m poetry self add poetry-pyinstaller-plugin
-                python3 -m poetry install
-                python3 -m poetry build
+                python -m pip install poetry
+                python -m poetry self add poetry-pyinstaller-plugin
+                python -m poetry install
+                python -m poetry build
                 if [ ! -f dist/pyinstaller/${{ matrix.folder }}/${{ matrix.executable }} ]
                 then
                     echo "Cannot find dist/pyinstaller/${{ matrix.folder }}/${{ matrix.executable }}"
