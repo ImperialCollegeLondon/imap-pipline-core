@@ -24,8 +24,6 @@ permissions:
 
 env:
   PREFERED_PYTHON_VERSION: '3.12'
-  DIST_BINARY_FOLDER: 'manylinux_2_36_x86_64'
-  APP_NAME: 'imap-mag'
 jobs:
   qa:
     runs-on: ubuntu-latest
@@ -37,7 +35,7 @@ jobs:
     strategy:
       matrix:
         python-versions: ['3.10', '3.11', '3.12']
-        os: [ubuntu-20.04]
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     # map step outputs to job outputs so they can be share among jobs
     outputs:
@@ -162,6 +160,19 @@ jobs:
             dist/${{ env.PACKAGE_NAME }}_python${{matrix.python-versions}}_${{ env.PACKAGE_VERSION }}.zip
 
   build_single_file_binary:
+    strategy:
+      matrix:
+        os: [linux, windows]
+        include:
+          - os: linux
+            image: batonogov/pyinstaller-linux:latest
+            executable: imap-mag
+            folder: manylinux_2_36_x86_64
+          - os: windows
+            image: batonogov/pyinstaller-windows:latest
+            executable: imap-mag.exe
+            folder: win_amd64
+
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v4
@@ -199,21 +210,25 @@ jobs:
         - uses: addnab/docker-run-action@v3
           with:
             registry: gcr.io
-            image: batonogov/pyinstaller-linux:latest
+            image: ${{ matrix.image }}
             options: -v ${{ github.workspace }}:/src/
             run: |
                 python3 -m pip install poetry
                 python3 -m poetry self add poetry-pyinstaller-plugin
                 python3 -m poetry install
                 python3 -m poetry build
-                ./dist/pyinstaller/${{env.DIST_BINARY_FOLDER}}/${{env.APP_NAME}} hello world
+                if [ ! -f dist/pyinstaller/${{ matrix.folder }}/${{ matrix.executable }} ]
+                then
+                    echo "Cannot find dist/pyinstaller/${{ matrix.folder }}/${{ matrix.executable }}"
+                    exit 1
+                fi
 
         - name: Zip up the binary
           run: |
             sudo chown -R $(whoami):$(whoami) .
-            cp pyinstaller/${{env.DIST_BINARY_FOLDER}}/${{env.APP_NAME}} .
-            zip -r ${{ env.PACKAGE_NAME }}_${{ env.DIST_BINARY_FOLDER }}_v${{ env.PACKAGE_VERSION }}.zip ${{env.APP_NAME}}
-            echo "PACKAGE_ZIP=${{ env.PACKAGE_NAME }}_${{ env.DIST_BINARY_FOLDER }}_v${{ env.PACKAGE_VERSION }}.zip" >> $GITHUB_ENV
+            cp pyinstaller/ ${{ matrix.folder }}/ ${{ matrix.executable}} .
+            zip -r ${{ env.PACKAGE_NAME }}_${{ matrix.executable }}_v${{ env.PACKAGE_VERSION }}.zip  ${{ matrix.executable }}
+            echo "PACKAGE_ZIP=${{ env.PACKAGE_NAME }}_${{ matrix.executable }}_v${{ env.PACKAGE_VERSION }}.zip" >> $GITHUB_ENV
           working-directory: dist
 
         - name: Upload build artifacts
