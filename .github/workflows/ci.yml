@@ -226,7 +226,7 @@ jobs:
         - name: Zip up the binary
           run: |
             sudo chown -R $(whoami):$(whoami) .
-            cp pyinstaller/ ${{ matrix.folder }}/ ${{ matrix.executable}} .
+            cp pyinstaller/${{ matrix.folder }}/${{ matrix.executable}} .
             zip -r ${{ env.PACKAGE_NAME }}_${{ matrix.executable }}_v${{ env.PACKAGE_VERSION }}.zip  ${{ matrix.executable }}
             echo "PACKAGE_ZIP=${{ env.PACKAGE_NAME }}_${{ matrix.executable }}_v${{ env.PACKAGE_VERSION }}.zip" >> $GITHUB_ENV
           working-directory: dist
