@@ -213,10 +213,10 @@ jobs:
             image: ${{ matrix.image }}
             options: -v ${{ github.workspace }}:/src/
             run: |
-                python3 -m pip install poetry
-                python3 -m poetry self add poetry-pyinstaller-plugin
-                python3 -m poetry install
-                python3 -m poetry build
+                python -m pip install poetry
+                python -m poetry self add poetry-pyinstaller-plugin
+                python -m poetry install
+                python -m poetry build
                 if [ ! -f dist/pyinstaller/${{ matrix.folder }}/${{ matrix.executable }} ]
                 then
                     echo "Cannot find dist/pyinstaller/${{ matrix.folder }}/${{ matrix.executable }}"
@@ -226,7 +226,7 @@ jobs:
         - name: Zip up the binary
           run: |
             sudo chown -R $(whoami):$(whoami) .
-            cp pyinstaller/ ${{ matrix.folder }}/ ${{ matrix.executable}} .
+            cp pyinstaller/${{ matrix.folder }}/${{ matrix.executable}} .
             zip -r ${{ env.PACKAGE_NAME }}_${{ matrix.executable }}_v${{ env.PACKAGE_VERSION }}.zip  ${{ matrix.executable }}
             echo "PACKAGE_ZIP=${{ env.PACKAGE_NAME }}_${{ matrix.executable }}_v${{ env.PACKAGE_VERSION }}.zip" >> $GITHUB_ENV
           working-directory: dist
