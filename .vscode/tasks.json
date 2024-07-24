@@ -7,6 +7,9 @@
                 "kind": "build"
             },
             "label": "build",
+            "presentation": {
+                "clear": true
+            },
             "problemMatcher": [],
             "type": "shell"
         }
