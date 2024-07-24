@@ -3,15 +3,16 @@
     // for the documentation about the tasks.json format
     "tasks": [
         {
-            "command": "./build.sh",
             "label": "build",
-            "presentation": {
-                "clear": true
-            },
+            "type": "shell",
+            "command": "./build.sh",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
                 "isDefault": true
+            },
+            "presentation": {
+                "clear": true
             }
         },
         {
