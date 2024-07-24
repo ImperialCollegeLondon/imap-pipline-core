@@ -81,6 +81,9 @@ class HKProcessor(FileProcessor):
             # TODO: What about the other ApIDs?
             return csvFile
 
+        # No data found.
+        return file
+
 
 class UnknownProcessor(FileProcessor):
     def initialize(self, config: appConfig.AppConfig) -> None:
