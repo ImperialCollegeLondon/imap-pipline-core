@@ -20,7 +20,12 @@ class Destination(BaseModel):
     filename: str
 
 
+class PacketDefinition(BaseModel):
+    hk: Path = Path("src/xtce/tlm_20240724.xml")
+
+
 class AppConfig(BaseModel):
     source: Source
     work_folder: Path = Path(".work")
     destination: Destination
+    packet_definition: PacketDefinition = PacketDefinition()

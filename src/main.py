@@ -90,7 +90,7 @@ def process(
     # TODO: handle file system/cloud files - abstraction layer needed for files
     # TODO: move shared logic to a library
 
-    configFile = commandInit(config)
+    configFile: appConfig.AppConfig = commandInit(config)
 
     logging.debug(f"Grabbing file matching {file} in {configFile.source.folder}")
 
@@ -125,10 +125,12 @@ def process(
     # copy the file to configFile.work_folder
     workFile = Path(configFile.work_folder, files[0].name)
     logging.debug(f"Copying {files[0]} to {workFile}")
-    workFile = shutil.copy2(files[0], configFile.work_folder)
+    workFile = Path(shutil.copy2(files[0], configFile.work_folder))
 
     # TODO: do something with the data!
-    result = imapProcessing.doSomething(workFile)
+    fileProcessor = imapProcessing.dispatchFile(workFile)
+    fileProcessor.initialize(configFile)
+    result = fileProcessor.process(workFile)
 
     # copy the result to the destination
     destinationFile = Path(configFile.destination.folder)
