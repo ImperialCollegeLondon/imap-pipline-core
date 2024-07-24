@@ -52,9 +52,7 @@ class HKProcessor(FileProcessor):
                 apid = packet.header["PKT_APID"].raw_value
                 dataDict.setdefault(apid, collections.defaultdict(list))
 
-                packetContent = packet.data
-
-                for key, value in packetContent.items():
+                for key, value in packet.data.items():
                     dataDict[apid][key].append(value.derived_value or value.raw_value)
 
         # Convert data to xarray datasets.
@@ -80,8 +78,8 @@ class HKProcessor(FileProcessor):
             csvFile = file.with_suffix(".csv")
             dataset.to_dataframe().to_csv(csvFile)
 
-        # TODO: What about the other ApIDs?
-        return csvFile
+            # TODO: What about the other ApIDs?
+            return csvFile
 
 
 class UnknownProcessor(FileProcessor):
