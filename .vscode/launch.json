@@ -11,7 +11,22 @@
             "name": "Python: Current File",
             "program": "${file}",
             "request": "launch",
-            "type": "python"
+            "type": "debugpy"
+        },
+        {
+            "name": "Docker: Python - General",
+            "preLaunchTask": "docker-run: debug",
+            "python": {
+                "pathMappings": [
+                    {
+                        "localRoot": "${workspaceFolder}",
+                        "remoteRoot": "/app"
+                    }
+                ],
+                "projectType": "general"
+            },
+            "request": "launch",
+            "type": "docker"
         }
     ],
     "version": "0.2.0"

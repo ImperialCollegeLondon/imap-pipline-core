@@ -6,7 +6,7 @@
 
 Open Dev Container in Visual Studio Code. Requires the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
 
-### WSL
+### WSL Setup
 
 1. [Download and install Poetry](https://python-poetry.org/docs/#installation) following the instructions for your OS.
 2. Set up the virtual environment:
@@ -26,3 +26,12 @@ Open Dev Container in Visual Studio Code. Requires the [Dev Containers](https://
     ```bash
     pre-commit install
     ```
+
+### Build, pack and test
+
+```bash
+./build.sh
+./pack.sh
+```
+
+You can also build a compiled linux executable with `./build-linux.sh` and a docker image with `./build-docker.sh`

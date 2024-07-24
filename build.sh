@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+# compile and test the app for the current python version
+
 # what version is this?
 python3 --version
 

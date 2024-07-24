@@ -1,6 +1,8 @@
 #!/bin/bash
 #set -e
 
+# create a version of the CLI tool that is frozen and packaged so needs no dependencies
+
 # setup the dist dir if not already there, and clear it
 mkdir -p dist
 

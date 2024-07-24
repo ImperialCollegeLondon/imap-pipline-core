@@ -16,6 +16,12 @@
         // "ghcr.io/devcontainers/features/git:1": {
         //     "version": "latest",
         //     "ppa": "false"
+        // },
+
+        // allow access to the HOST docker socker for docker desktop
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+
+        },
 
         // poetry also available as a dev container feature but we install it using dev-env-first-time.sh so PATH is setup
         //"ghcr.io/devcontainers-contrib/features/poetry:2": {},
@@ -60,6 +66,7 @@
                 "ms-python.mypy-type-checker",
                 "eamodio.gitlens",
                 "GitHub.vscode-pull-request-github"
+                "ms-azuretools.vscode-docker"
             ]
         }
     },

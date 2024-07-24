@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-CLI_TOOL="imap-mag"
+CLI_TOOL="imap_mag"
 TOOL_PYTHON_VERSION="${TOOL_PYTHON_VERSION:-python3.12}"
 TOOL_PACKAGE="${TOOL_PACKAGE:-$CLI_TOOL-*.tar.gz}"
 

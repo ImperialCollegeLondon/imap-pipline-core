@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+# compile and pack the app for many python versions
+
 OUTPUT_DIR="dist"
 
 rm -rf $OUTPUT_DIR
