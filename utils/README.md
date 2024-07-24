@@ -1,0 +1,9 @@
+# IMAP MAG Pipeline Utilities
+
+## HK from TLM Database
+
+To generate XML file with XTCE tool (from [`imap_processing`](https://github.com/IMAP-Science-Operations-Center/imap_processing)):
+
+``` shell
+imap_xtce ../IM-MAG-SW/acceptance-tests/gseos/IMAP.8.3.037/Instruments/MAG_Common/TLM_MAG.xls --output ../imap-pipeline-core/src/xtce/tlm_YYYYMMDD.xml
+```
