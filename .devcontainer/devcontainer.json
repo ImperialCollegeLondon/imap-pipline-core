@@ -65,7 +65,7 @@
                 "charliermarsh.ruff",
                 "ms-python.mypy-type-checker",
                 "eamodio.gitlens",
-                "GitHub.vscode-pull-request-github"
+                "GitHub.vscode-pull-request-github",
                 "ms-azuretools.vscode-docker"
             ]
         }
