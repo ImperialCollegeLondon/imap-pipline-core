@@ -1,4 +1,11 @@
 #!/bin/bash
 set -e
 
-imap-mag hello world
+
+while :
+do
+    imap-mag hello world
+    sleep 3600 # 1 Hour
+done
+
+
