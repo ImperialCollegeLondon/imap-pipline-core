@@ -73,7 +73,7 @@ def query_db():
 @app.command()
 def upgrade_db():
     folder = pathlib.Path(__file__).parent.resolve()
-    script_location = "src/imap_db/migrations"
+    script_location = "migrations"
 
     # combine them in OS agnostic way
     script_location = os.path.join(folder, script_location)
