@@ -14,7 +14,9 @@ from .model import Base, File
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
-config = config.Config("alembic.ini")
+folder = pathlib.Path(__file__).parent.resolve()
+alembic_ini = os.path.join(folder, "alembic.ini")
+config = config.Config(alembic_ini)
 
 app = typer.Typer()
 
