@@ -8,9 +8,6 @@ packages = [
     { include = "src/imap_mag" },
     { include = "src/imap_db" },
 ]
-include = [
-    { path = "alembic.ini", format = ["sdist", "wheel"] }
-]
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
