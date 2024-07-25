@@ -1,18 +1,17 @@
 """App configuration module."""
 
-from enum import Enum
 from pathlib import Path
 
 from pydantic import BaseModel
+from pydantic.config import ConfigDict
+
+
+def hyphenize(field: str):
+    return field.replace("_", "-")
 
 
 class Source(BaseModel):
     folder: Path
-
-
-class DestinationType(Enum):
-    LOCAL = "local"
-    SFTP = "sftp"
 
 
 class Destination(BaseModel):
@@ -21,11 +20,14 @@ class Destination(BaseModel):
 
 
 class PacketDefinition(BaseModel):
-    hk: Path = Path("src/xtce/tlm_20240724.xml")
+    hk: Path
 
 
 class AppConfig(BaseModel):
     source: Source
     work_folder: Path = Path(".work")
     destination: Destination
-    packet_definition: PacketDefinition = PacketDefinition()
+    packet_definition: PacketDefinition
+
+    # pydantic configuration to allow hyphenated fields
+    model_config = ConfigDict(alias_generator=hyphenize)

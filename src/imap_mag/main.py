@@ -14,7 +14,7 @@ import typer
 import yaml
 
 # app code
-from src import appConfig, appLogging, imapProcessing
+from . import appConfig, appLogging, imapProcessing
 
 app = typer.Typer()
 globalState = {"verbose": False}

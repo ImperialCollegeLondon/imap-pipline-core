@@ -6,9 +6,8 @@ import os
 from pathlib import Path
 
 import pytest
+from imap_mag.main import app
 from typer.testing import CliRunner
-
-from src.main import app
 
 runner = CliRunner()
 
