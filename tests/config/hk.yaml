@@ -5,7 +5,7 @@ work-folder: .work
 
 destination:
   folder: output/
-  filename: result.cdf
+  filename: result.csv
 
 packet-definition:
   hk: src/xtce/tlm_20240724.xml

@@ -60,8 +60,9 @@
                 "EditorConfig.EditorConfig",
                 "ms-python.python",
                 "ms-python.black-formatter",
-                "github.vscode-github-actions",
+                "ms-python.mypy-type-checker",
                 "ms-azuretools.vscode-docker",
+                "github.vscode-github-actions",
                 "charliermarsh.ruff"
             ]
         }

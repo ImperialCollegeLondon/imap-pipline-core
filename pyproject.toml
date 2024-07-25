@@ -13,6 +13,9 @@ python = ">=3.9,<3.13"
 pyyaml = "^6.0.1"
 typing-extensions = "^4.9.0"
 pydantic = "^2.6.1"
+space-packet-parser = "^4.2.0"
+xarray = "^2024.6.0"
+numpy = "^2.0.1"
 typer = "^0.12.3"
 
 [tool.poetry.group.dev.dependencies]
@@ -52,4 +55,4 @@ pydocstyle.convention = "google"
 #  * Missing docstring in public module, class, method, function, package and __init__
 #  * Line too long
 #  * Optional replaced as X | None
-"*" = ["D100", "D101", "D102", "D103", "D104", "D107", "E501", "UP007"]
+"*" = ["D100", "D101", "D102", "D103", "D104", "D107", "D202", "E501", "UP007"]
