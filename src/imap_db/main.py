@@ -1,6 +1,7 @@
 """Main module."""
 
 import os
+import pathlib
 
 import sqlalchemy
 import typer
@@ -71,7 +72,12 @@ def query_db():
 
 @app.command()
 def upgrade_db():
+    folder = pathlib.Path(__file__).parent.resolve()
     script_location = "src/imap_db/migrations"
+
+    # combine them in OS agnostic way
+    script_location = os.path.join(folder, script_location)
+
     print("Running DB migrations in %r on %r", script_location, url)
 
     config.set_main_option("script_location", script_location)

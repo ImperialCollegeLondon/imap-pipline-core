@@ -1,9 +1,10 @@
 #!/bin/bash
 set -e
 
-
+echo "start DB admin"
 imap-db create-db
 imap-db upgrade-db
+echo "DB admin complete"
 
 while :
 do
