@@ -5,8 +5,8 @@ description = "Process IMAP data"
 authors = ["alastairtree"]
 readme = "README.md"
 packages = [
-    { include = "src/imap_mag", to = "imap_mag" },
-    { include = "src/imap_db", to = "imap_db" },
+    { include = "src/imap_mag" },
+    { include = "src/imap_db" },
 ]
 
 [tool.poetry.dependencies]
