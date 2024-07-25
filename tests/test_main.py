@@ -34,7 +34,6 @@ def test_process_with_valid_config_does_not_error(tidyDataFolders):
             "process",
             "--config",
             "config.yml",
-            "--file",
             "imap_mag_l1a_norm-mago_20250502_v000.cdf",
         ],
     )
@@ -59,7 +58,6 @@ def test_process_with_binary_hk_converts_to_csv(tidyDataFolders):
             "process",
             "--config",
             "tests/config/hk.yaml",
-            "--file",
             "MAG_HSK_PW.pkts",
         ],
     )
