@@ -12,6 +12,9 @@ source .venv/bin/activate
 # restore dependencies
 poetry install
 
+# Check the CLI actually runs as a basic CLI app
+poetry run imap-mag hello world
+
 # tidy up fomatting and check syntax
 poetry run ruff check --fix
 

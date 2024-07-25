@@ -34,7 +34,6 @@ def test_process_with_valid_config_does_not_error(tidyDataFolders):
             "process",
             "--config",
             "config.yml",
-            "--file",
             "solo_L2_mag-rtn-ll-internal_20240210_V00.cdf",
         ],
     )

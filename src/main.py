@@ -5,7 +5,7 @@ import os
 import shutil
 from datetime import datetime
 from pathlib import Path
-from typing import Annotated, Optional
+from typing import Annotated
 
 # cli
 import typer
@@ -77,12 +77,12 @@ def hello(name: str):
     print(f"Hello {name}")
 
 
-# E.g  imap-mag process --config config.yml --file solo_L2_mag-rtn-ll-internal_20240210_V00.cdf
+# E.g  imap-mag process --config config.yml solo_L2_mag-rtn-ll-internal_20240210_V00.cdf
 @app.command()
 def process(
-    config: Annotated[Optional[Path], typer.Option(default=None)] = Path("config.yml"),
-    file: str = typer.Option(
-        default=..., help="The file name or pattern to match for the input file"
+    config: Annotated[Path, typer.Option()] = Path("config.yml"),
+    file: str = typer.Argument(
+        help="The file name or pattern to match for the input file"
     ),
 ):
     """Sample processing job."""
