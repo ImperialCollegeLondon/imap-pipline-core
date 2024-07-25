@@ -6,11 +6,11 @@ set -e
 # what version is this?
 python3 --version
 
+# restore dependencies & create an venv if needed
+poetry install
+
 # load the current python virtual environment - assumes you have already probably run "poetry shell" or are calling from build-python-versions.sh
 source .venv/bin/activate
-
-# restore dependencies
-poetry install
 
 # Check the CLI actually runs as a basic CLI app
 poetry run imap-mag hello world
