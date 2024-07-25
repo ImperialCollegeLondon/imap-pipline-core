@@ -20,6 +20,9 @@ RUN adduser -u 5678 --disabled-password --gecos "" appuser && \
     chown -R appuser /app && \
     chmod +x /app/entrypoint.sh
 
+# Install the postgres client and any other dependencies needed to install our app
+RUN apt-get update && apt-get install -y libpq-dev gcc
+
 WORKDIR /app
 USER appuser
 

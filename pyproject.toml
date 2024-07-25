@@ -5,8 +5,8 @@ description = "Process IMAP data"
 authors = ["alastairtree"]
 readme = "README.md"
 packages = [
-    { include = "imap_mag", from = "src", to="imap_mag" },
-    { include = "imap_db", from = "src", to="imap_db" },
+    { include = "src/imap_mag" },
+    { include = "src/imap_db" },
 ]
 
 [tool.poetry.dependencies]
@@ -32,8 +32,8 @@ ruff = "^0.5.4"
 
 [tool.poetry.scripts]
 # can execute via poetry, e.g. `poetry run imap-mag hello world`
-imap-mag = 'imap_mag.main:app'
-imap-db = 'imap_db.main:app'
+imap-mag = 'src.imap_mag.main:app'
+imap-db = 'src.imap_db.main:app'
 
 [build-system]
 requires = ["poetry-core"]
