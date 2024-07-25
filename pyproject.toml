@@ -18,6 +18,10 @@ space-packet-parser = "^4.2.0"
 xarray = "^2024.6.0"
 numpy = "^2.0.1"
 typer = "^0.12.3"
+sqlalchemy = "^2.0.31"
+psycopg2 = "^2.9.9"
+alembic = "^1.13.2"
+sqlalchemy-utils = "^0.41.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.1"

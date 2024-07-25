@@ -17,5 +17,17 @@
     ],
     "python.analysis.extraPaths": [
         "./src"
+    ],
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "host.docker.internal",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "postgres",
+            "password": "",
+            "database": "imap",
+            "username": "postgres"
+        }
     ]
 }

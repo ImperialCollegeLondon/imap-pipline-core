@@ -2,6 +2,9 @@
 set -e
 
 
+imap-db create-db
+imap-db upgrade-db
+
 while :
 do
     imap-mag hello world
