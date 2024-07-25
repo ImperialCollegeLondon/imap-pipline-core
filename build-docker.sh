@@ -8,8 +8,8 @@ IMAGE_NAME="${IMAGE_NAME:-imap-pipeline-core/imap-mag}"
 
 if [ ! -f dist/$TOOL_PYTHON_VERSION/$TOOL_PACKAGE ]
 then
-    echo "Cannot find tar in dist/$TOOL_PYTHON_VERSION. Run build.sh or build-all.sh?"
-    exit 1
+    echo "Cannot find tar in dist/$TOOL_PYTHON_VERSION. Running pack.sh"
+    ./pack.sh
 fi
 
 # compile imap-mag into a docker container

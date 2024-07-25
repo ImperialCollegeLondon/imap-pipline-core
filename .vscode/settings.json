@@ -3,13 +3,9 @@
         "editor.codeActionsOnSave": {
             "source.organizeImports": "explicit"
         },
-        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.formatOnSave": true
     },
-    "isort.args": [
-        "--profile",
-        "black"
-    ],
     "python.testing.pytestArgs": [
         "tests"
     ],
