@@ -10,7 +10,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
-typer = {extras = ["all"], version = "^0.7.0"}
+typer = {extras = ["all"], version = "^0.12.3"}
 pyyaml = "^6.0.1"
 typing-extensions = "^4.9.0"
 pydantic = "^2.6.1"
