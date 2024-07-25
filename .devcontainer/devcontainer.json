@@ -60,13 +60,10 @@
                 "EditorConfig.EditorConfig",
                 "ms-python.python",
                 "ms-python.black-formatter",
-                "github.vscode-github-actions",
-                "actboy168.tasks",
-                "charliermarsh.ruff",
                 "ms-python.mypy-type-checker",
-                "eamodio.gitlens",
-                "GitHub.vscode-pull-request-github",
-                "ms-azuretools.vscode-docker"
+                "ms-azuretools.vscode-docker",
+                "github.vscode-github-actions",
+                "charliermarsh.ruff"
             ]
         }
     },
