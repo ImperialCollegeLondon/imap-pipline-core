@@ -106,7 +106,7 @@ jobs:
             # use custom value instead of git tag
             type=semver,pattern={{version}},value=${{ env.PACKAGE_VERSION }}
             # set latest tag for default branch
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest
             # branch event
             type=ref,event=branch
             # pull request event
