@@ -24,6 +24,7 @@ permissions:
 
 env:
   PREFERED_PYTHON_VERSION: '3.12'
+  WEBPODA_AUTH_CODE: ${{ secrets.WEBPODA_AUTH_CODE }}
 jobs:
   qa:
     runs-on: ubuntu-latest

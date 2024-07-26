@@ -51,7 +51,7 @@ def test_process_with_binary_hk_converts_to_csv(tidyDataFolders):
     expectedLastLine = "799437851184000000,483861787,0,1,0,3,25,3,1.52370834,1.82973516,3.3652049479999997,2.54942028,9.555648769,-9.5531674296,26.019506700000022,2.3559926719999997,419.9364473837,31.800489164000002,131.13964636,92.94935734500001,193.83599999999998,154.8802,25.938177593750083,25.628958683022688,0,0,0,0,0,0,0,3,3,0,0,0,0,1,1063,3,495,43\n"
     expectedNumRows = 1335
 
-    # Execute.
+    # Exercise.
     result = runner.invoke(
         app,
         [
@@ -74,3 +74,27 @@ def test_process_with_binary_hk_converts_to_csv(tidyDataFolders):
         assert expectedFirstLine == lines[1]
         assert expectedLastLine == lines[-1]
         assert expectedNumRows == len(lines)
+
+
+def test_fetch_binary_downloads_hk_from_webpoda(tidyDataFolders):
+    # Exercise.
+    result = runner.invoke(
+        app,
+        [
+            "fetch-binary",
+            "--config",
+            "config.yml",
+            "--apid",
+            "1063",
+            "--start-date",
+            "2025-05-02",
+            "--end-date",
+            "2025-05-03",
+        ],
+    )
+
+    print("\n" + str(result.stdout))
+
+    # Verify.
+    assert result.exit_code == 0
+    assert Path("output/MAG_HSK_PW.pkts").exists()
