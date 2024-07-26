@@ -8,6 +8,7 @@ from datetime import datetime
 from pathlib import Path
 
 import requests
+from typing_extensions import Unpack
 
 
 class DownloadOptions(typing.TypedDict):
@@ -22,7 +23,7 @@ class IWebPODA(abc.ABC):
     """Interface for downloading raw packets from WebPODA."""
 
     @abc.abstractmethod
-    def download(self, **options: typing.Unpack[DownloadOptions]) -> str:
+    def download(self, **options: Unpack[DownloadOptions]) -> Path:
         """Download packet data from WebPODA."""
         pass
 
@@ -39,7 +40,7 @@ class WebPODA(IWebPODA):
         self.__auth_code = auth_code
         self.__output_dir = output_dir
 
-    def download(self, **options: typing.Unpack[DownloadOptions]) -> Path:
+    def download(self, **options: Unpack[DownloadOptions]) -> Path:
         """Download packet data from WebPODA."""
 
         file_path: Path = self.__output_dir / (options["packet"] + ".bin")
