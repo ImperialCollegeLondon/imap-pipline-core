@@ -5,6 +5,7 @@ import logging
 import os
 import typing
 from datetime import datetime
+from pathlib import Path
 
 import requests
 
@@ -30,25 +31,27 @@ class WebPODA(IWebPODA):
     """Class for downloading raw packets from WebPODA."""
 
     __auth_code: str
-    __output_dir: str
+    __output_dir: Path
 
-    def __init__(self, auth_code: str, output_dir: str) -> None:
+    def __init__(self, auth_code: str, output_dir: Path) -> None:
         """Initialize WebPODA interface."""
 
         self.__auth_code = auth_code
         self.__output_dir = output_dir
 
-    def download(self, **options: typing.Unpack[DownloadOptions]) -> str:
+    def download(self, **options: typing.Unpack[DownloadOptions]) -> Path:
         """Download packet data from WebPODA."""
 
-        file_path = os.path.join(self.__output_dir, options["packet"] + ".pkts")
-        unit = "S/C"
+        file_path: Path = self.__output_dir / (options["packet"] + ".bin")
 
         logging.info(
             f"Downloading {options['packet']} from "
-            f"{options['start_date']} to {options['end_date']} ({unit}) "
+            f"{options['start_date']} to {options['end_date']} (S/C time) "
             f"into {file_path}."
         )
+
+        if not self.__output_dir.exists():
+            os.makedirs(self.__output_dir)
 
         response: requests.Response = self.__download_from_webpoda(
             options["packet"],

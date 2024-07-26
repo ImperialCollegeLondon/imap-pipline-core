@@ -57,7 +57,7 @@ def test_process_with_binary_hk_converts_to_csv(tidyDataFolders):
         [
             "process",
             "--config",
-            "tests/config/hk.yaml",
+            "tests/config/hk_process.yaml",
             "MAG_HSK_PW.pkts",
         ],
     )
@@ -83,7 +83,7 @@ def test_fetch_binary_downloads_hk_from_webpoda(tidyDataFolders):
         [
             "fetch-binary",
             "--config",
-            "config.yml",
+            "tests/config/hk_download.yaml",
             "--apid",
             "1063",
             "--start-date",
@@ -97,4 +97,4 @@ def test_fetch_binary_downloads_hk_from_webpoda(tidyDataFolders):
 
     # Verify.
     assert result.exit_code == 0
-    assert Path("output/MAG_HSK_PW.pkts").exists()
+    assert Path("output/power.pkts").exists()

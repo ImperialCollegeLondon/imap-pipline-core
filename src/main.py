@@ -132,20 +132,7 @@ def process(
     fileProcessor.initialize(configFile)
     result = fileProcessor.process(workFile)
 
-    # copy the result to the destination
-    destinationFile = Path(configFile.destination.folder)
-
-    # if destination folder does not exists create it
-    if not destinationFile.exists():
-        logging.debug(f"Creating destination folder {destinationFile}")
-        os.makedirs(destinationFile)
-
-    if configFile.destination.filename:
-        destinationFile = destinationFile / configFile.destination.filename
-
-    logging.info(f"Copying {result} to {destinationFile.absolute()}")
-    completed = shutil.copy2(result, destinationFile)
-    logging.info(f"Copy complete: {completed}")
+    appUtils.copyFileToDestination(result, configFile.destination)
 
 
 # E.g., imap-mag fetch-binary --apid 1063 --start-date 2025-05-02 --end-date 2025-05-03
@@ -172,12 +159,14 @@ def fetch_binary(
     packet: str = appUtils.getPacketFromApID(apid)
     logging.info(f"Downloading raw packet {packet} from {start_date} to {end_date}.")
 
-    poda = webPODA.WebPODA(auth_code, configFile.destination.folder)
-    poda.download(
+    poda = webPODA.WebPODA(auth_code, configFile.work_folder)
+    result: str = poda.download(
         packet=packet,
         start_date=appUtils.convertToDatetime(start_date),
         end_date=appUtils.convertToDatetime(end_date),
     )
+
+    appUtils.copyFileToDestination(result, configFile.destination)
 
 
 @app.callback()

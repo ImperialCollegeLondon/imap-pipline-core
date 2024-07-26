@@ -1,9 +1,14 @@
 import logging
+import os
+import shutil
+from pathlib import Path
 from typing import Optional
 
 import numpy as np
 import pandas as pd
 import typer
+
+from src import appConfig
 
 IMAP_EPOCH = np.datetime64("2010-01-01T00:00:00", "ns")
 J2000_EPOCH = np.datetime64("2000-01-01T11:58:55.816", "ns")
@@ -49,3 +54,20 @@ def convertToDatetime(string: str) -> np.datetime64:
     except Exception as e:
         logging.critical(f"Error parsing {string} as datetime: {e}")
         raise typer.Abort()
+
+
+def copyFileToDestination(filePath: Path, destination: appConfig.Destination) -> None:
+    """Copy file to destination folder."""
+
+    destinationFile = Path(destination.folder)
+
+    if not destinationFile.exists():
+        logging.debug(f"Creating destination folder {destinationFile}.")
+        os.makedirs(destinationFile)
+
+    if destination.filename:
+        destinationFile = destinationFile / destination.filename
+
+    logging.info(f"Copying {filePath} to {destinationFile.absolute()}")
+    completed = shutil.copy2(filePath, destinationFile)
+    logging.info(f"Copy complete: {completed}")
