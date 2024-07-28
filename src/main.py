@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 from datetime import datetime
+from enum import Enum
 from pathlib import Path
 from typing import Annotated
 
@@ -14,7 +15,8 @@ import typer
 import yaml
 
 # app code
-from src import appConfig, appLogging, appUtils, imapProcessing, webPODA
+from src import SDC, appConfig, appLogging, appUtils, imapProcessing, webPODA
+from src.sdcApiClient import SDCApiClient
 
 app = typer.Typer()
 globalState = {"verbose": False}
@@ -167,6 +169,51 @@ def fetch_binary(
     )
 
     appUtils.copyFileToDestination(result, configFile.destination)
+
+
+class LevelEnum(str, Enum):
+    level_1 = "l1"
+    level_2 = "l2"
+    level_3 = "l3"
+
+
+# E.g., imap-mag fetch-science --start-date 2025-05-02 --end-date 2025-05-03
+@app.command()
+def fetch_science(
+    auth_code: Annotated[
+        str,
+        typer.Option(
+            envvar="SDC_AUTH_CODE",
+            help="IMAP Science Data Centre API Key",
+        ),
+    ],
+    start_date: Annotated[str, typer.Option(help="Start date for the download")],
+    end_date: Annotated[str, typer.Option(help="End date for the download")],
+    level: Annotated[
+        LevelEnum, typer.Option(help="Level to download")
+    ] = LevelEnum.level_2,
+    force: Annotated[
+        bool,
+        typer.Option("--force", "-f", help="Force download even if the file exists"),
+    ] = False,
+    config: Annotated[Path, typer.Option()] = Path("config.yml"),
+):
+    configFile: appConfig.AppConfig = commandInit(config)
+
+    if not auth_code:
+        logging.critical("No SDC_AUTH_CODE API key provided")
+        raise typer.Abort()
+
+    logging.info(f"Downloading {level} science from {start_date} to {end_date}.")
+
+    data_access = SDCApiClient(data_dir=str(configFile.work_folder))
+
+    sdc = SDC.SDC(data_access)
+
+    # TODO: any better way than passing a dictionary? Strongly typed?
+    sdc.QueryAndDownload(
+        level=level, start_date=start_date, end_date=end_date, force=force
+    )
 
 
 @app.callback()
