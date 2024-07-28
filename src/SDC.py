@@ -3,6 +3,7 @@
 import logging
 import typing
 from datetime import datetime
+from pathlib import Path
 
 import pandas as pd
 
@@ -45,8 +46,11 @@ class SDC:
 
         self.__data_access = data_access
 
-    def QueryAndDownload(self, **options: typing.Unpack[SDCOptions]) -> None:
+    def QueryAndDownload(self, **options: typing.Unpack[SDCOptions]) -> list[Path]:
         """Retrieve SDC data."""
+
+        downloaded = []
+
         for details in self.__PACKET_DETAILS:
             (start, end) = self.__extract_time_range(
                 options["start_date"],
@@ -83,7 +87,11 @@ class SDC:
 
                     if files is not None:
                         for file in files:
-                            self.__data_access.download(file["file_path"])
+                            downloaded += [
+                                self.__data_access.download(file["file_path"])
+                            ]
+
+        return downloaded
 
     def __extract_time_range(self, start_date: str, end_date: str) -> tuple[Time, Time]:
         """Extract time range as S/C and ERT Time object."""

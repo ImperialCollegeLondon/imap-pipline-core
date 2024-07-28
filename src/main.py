@@ -211,9 +211,14 @@ def fetch_science(
     sdc = SDC.SDC(data_access)
 
     # TODO: any better way than passing a dictionary? Strongly typed?
-    sdc.QueryAndDownload(
+    files = sdc.QueryAndDownload(
         level=level, start_date=start_date, end_date=end_date, force=force
     )
+
+    # TODO: save the files to the database
+
+    for file in files:
+        appUtils.copyFileToDestination(file, configFile.destination)
 
 
 @app.callback()
