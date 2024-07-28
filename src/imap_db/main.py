@@ -66,7 +66,8 @@ def drop_db():
 def query_db():
     session = Session(engine)
 
-    stmt = select(File).where(File.name.in_(["file1.txt"]))
+    # stmt = select(File).where(File.name.in_(["file1.txt"]))
+    stmt = select(File).where(File.name is not None)
 
     for user in session.scalars(stmt):
         print(user)

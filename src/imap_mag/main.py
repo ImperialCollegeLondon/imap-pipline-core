@@ -14,8 +14,10 @@ import typer
 # config
 import yaml
 
+from src.imap_db.model import File
+
 # app code
-from . import SDC, appConfig, appLogging, appUtils, imapProcessing, webPODA
+from . import DB, SDC, appConfig, appLogging, appUtils, imapProcessing, webPODA
 from .sdcApiClient import SDCApiClient
 
 app = typer.Typer()
@@ -196,7 +198,7 @@ def fetch_science(
         bool,
         typer.Option("--force", "-f", help="Force download even if the file exists"),
     ] = False,
-    config: Annotated[Path, typer.Option()] = Path("config.yml"),
+    config: Annotated[Path, typer.Option()] = Path("config-sci.yml"),
 ):
     configFile: appConfig.AppConfig = commandInit(config)
 
@@ -215,10 +217,17 @@ def fetch_science(
         level=level, start_date=start_date, end_date=end_date, force=force
     )
 
-    # TODO: save the files to the database
-
+    records = []
     for file in files:
-        appUtils.copyFileToDestination(file, configFile.destination)
+        records.append(File(name=file.name, path=file.absolute().as_posix()))
+
+    db = DB()
+    db.insert_files(records)
+
+    logging.info(f"Downloaded {len(files)} files and saved to database")
+
+    # for file in files:
+    #     appUtils.copyFileToDestination(file, configFile.destination)
 
 
 @app.callback()

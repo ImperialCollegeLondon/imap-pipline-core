@@ -1,10 +1,8 @@
-source:
-  folder: tests/data/2025
 
-work-folder: .work
+work-folder: /data/.work
 
 destination:
-  folder: output/
+  folder: /data/hk_l0/
   filename: power.pkts
 
 packet-definition:
