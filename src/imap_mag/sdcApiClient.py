@@ -7,6 +7,7 @@ import typing
 from datetime import datetime
 
 import imap_data_access
+from typing_extensions import Unpack
 
 
 class FileOptions(typing.TypedDict):
@@ -41,7 +42,7 @@ class ISDCApiClient(abc.ABC):
 
     @staticmethod
     @abc.abstractmethod
-    def get_file_path(**options: typing.Unpack[FileOptions]) -> tuple[str, str]:
+    def get_file_path(**options: Unpack[FileOptions]) -> tuple[str, str]:
         """Get file path for data from imap-data-access."""
         pass
 
@@ -52,19 +53,19 @@ class ISDCApiClient(abc.ABC):
 
     @abc.abstractmethod
     def unique_version(
-        self, **options: typing.Unpack[VersionOptions]
+        self, **options: Unpack[VersionOptions]
     ) -> tuple[str, str | None]:
         """Determine a unique version for the data by querying imap_data_access."""
         pass
 
     @abc.abstractmethod
-    def query(self, **options: typing.Unpack[QueryOptions]) -> list[dict[str, str]]:
+    def query(self, **options: Unpack[QueryOptions]) -> list[dict[str, str]]:
         """Download data from imap-data-access."""
         pass
 
     @abc.abstractmethod
     def get_filename(
-        self, **options: typing.Unpack[FileOptions]
+        self, **options: Unpack[FileOptions]
     ) -> list[dict[str, str]] | None:
         """Wait for file to be available in imap-data-access."""
         pass
@@ -82,7 +83,7 @@ class SDCApiClient(ISDCApiClient):
         imap_data_access.config["DATA_DIR"] = pathlib.Path(data_dir)
 
     @staticmethod
-    def get_file_path(**options: typing.Unpack[FileOptions]) -> tuple[str, str]:
+    def get_file_path(**options: Unpack[FileOptions]) -> tuple[str, str]:
         """Get file path for data from imap-data-access."""
 
         science_file = imap_data_access.ScienceFilePath.generate_from_inputs(
@@ -106,7 +107,7 @@ class SDCApiClient(ISDCApiClient):
             logging.warn(f"Upload failed: {e}")
 
     def unique_version(
-        self, **options: typing.Unpack[VersionOptions]
+        self, **options: Unpack[VersionOptions]
     ) -> tuple[str, str | None]:
         """Determine a unique version for the data by querying imap_data_access."""
 
@@ -132,7 +133,7 @@ class SDCApiClient(ISDCApiClient):
 
         return (unique_version, max_version)
 
-    def query(self, **options: typing.Unpack[QueryOptions]) -> list[dict[str, str]]:
+    def query(self, **options: Unpack[QueryOptions]) -> list[dict[str, str]]:
         """Download data from imap-data-access."""
 
         return imap_data_access.query(
@@ -152,7 +153,7 @@ class SDCApiClient(ISDCApiClient):
         )
 
     def get_filename(
-        self, **options: typing.Unpack[FileOptions]
+        self, **options: Unpack[FileOptions]
     ) -> list[dict[str, str]] | None:
         science_file = imap_data_access.ScienceFilePath.generate_from_inputs(
             instrument="mag",

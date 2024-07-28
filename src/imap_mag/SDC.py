@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
+from typing_extensions import Unpack
 
 from .sdcApiClient import ISDCApiClient
 from .time import Time
@@ -46,7 +47,7 @@ class SDC:
 
         self.__data_access = data_access
 
-    def QueryAndDownload(self, **options: typing.Unpack[SDCOptions]) -> list[Path]:
+    def QueryAndDownload(self, **options: Unpack[SDCOptions]) -> list[Path]:
         """Retrieve SDC data."""
 
         downloaded = []
@@ -114,7 +115,7 @@ class SDC:
         self,
         details: dict,
         date: datetime,
-        **options: typing.Unpack[SDCOptions],
+        **options: Unpack[SDCOptions],
     ) -> bool:
         """Check if files need to be downloaded."""
 
