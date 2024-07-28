@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 from datetime import datetime
+from enum import Enum
 from pathlib import Path
 from typing import Annotated
 
@@ -14,7 +15,8 @@ import typer
 import yaml
 
 # app code
-from . import appConfig, appLogging, imapProcessing
+from . import SDC, appConfig, appLogging, appUtils, imapProcessing, webPODA
+from .sdcApiClient import SDCApiClient
 
 app = typer.Typer()
 globalState = {"verbose": False}
@@ -80,10 +82,10 @@ def hello(name: str):
 # E.g  imap-mag process --config config.yml solo_L2_mag-rtn-ll-internal_20240210_V00.cdf
 @app.command()
 def process(
+    file: Annotated[
+        str, typer.Argument(help="The file name or pattern to match for the input file")
+    ],
     config: Annotated[Path, typer.Option()] = Path("config.yml"),
-    file: str = typer.Argument(
-        help="The file name or pattern to match for the input file"
-    ),
 ):
     """Sample processing job."""
     # TODO: semantic logging
@@ -132,20 +134,91 @@ def process(
     fileProcessor.initialize(configFile)
     result = fileProcessor.process(workFile)
 
-    # copy the result to the destination
-    destinationFile = Path(configFile.destination.folder)
+    appUtils.copyFileToDestination(result, configFile.destination)
 
-    # if destination folder does not exists create it
-    if not destinationFile.exists():
-        logging.debug(f"Creating destination folder {destinationFile}")
-        os.makedirs(destinationFile)
 
-    if configFile.destination.filename:
-        destinationFile = destinationFile / configFile.destination.filename
+# E.g., imap-mag fetch-binary --apid 1063 --start-date 2025-05-02 --end-date 2025-05-03
+@app.command()
+def fetch_binary(
+    auth_code: Annotated[
+        str,
+        typer.Option(
+            envvar="WEBPODA_AUTH_CODE",
+            help="WebPODA authentication code",
+        ),
+    ],
+    apid: Annotated[int, typer.Option(help="ApID to download")],
+    start_date: Annotated[str, typer.Option(help="Start date for the download")],
+    end_date: Annotated[str, typer.Option(help="End date for the download")],
+    config: Annotated[Path, typer.Option()] = Path("config.yml"),
+):
+    configFile: appConfig.AppConfig = commandInit(config)
 
-    logging.info(f"Copying {result} to {destinationFile.absolute()}")
-    completed = shutil.copy2(result, destinationFile)
-    logging.info(f"Copy complete: {completed}")
+    if not auth_code:
+        logging.critical("No WebPODA authorization code provided")
+        raise typer.Abort()
+
+    packet: str = appUtils.getPacketFromApID(apid)
+    logging.info(f"Downloading raw packet {packet} from {start_date} to {end_date}.")
+
+    poda = webPODA.WebPODA(auth_code, configFile.work_folder)
+    result: str = poda.download(
+        packet=packet,
+        start_date=appUtils.convertToDatetime(start_date),
+        end_date=appUtils.convertToDatetime(end_date),
+    )
+
+    appUtils.copyFileToDestination(result, configFile.destination)
+
+
+class LevelEnum(str, Enum):
+    level_1 = "l1"
+    level_2 = "l2"
+    level_3 = "l3"
+
+
+# E.g., imap-mag fetch-science --start-date 2025-05-02 --end-date 2025-05-03
+@app.command()
+def fetch_science(
+    auth_code: Annotated[
+        str,
+        typer.Option(
+            envvar="SDC_AUTH_CODE",
+            help="IMAP Science Data Centre API Key",
+        ),
+    ],
+    start_date: Annotated[str, typer.Option(help="Start date for the download")],
+    end_date: Annotated[str, typer.Option(help="End date for the download")],
+    level: Annotated[
+        LevelEnum, typer.Option(help="Level to download")
+    ] = LevelEnum.level_2,
+    force: Annotated[
+        bool,
+        typer.Option("--force", "-f", help="Force download even if the file exists"),
+    ] = False,
+    config: Annotated[Path, typer.Option()] = Path("config.yml"),
+):
+    configFile: appConfig.AppConfig = commandInit(config)
+
+    if not auth_code:
+        logging.critical("No SDC_AUTH_CODE API key provided")
+        raise typer.Abort()
+
+    logging.info(f"Downloading {level} science from {start_date} to {end_date}.")
+
+    data_access = SDCApiClient(data_dir=str(configFile.work_folder))
+
+    sdc = SDC.SDC(data_access)
+
+    # TODO: any better way than passing a dictionary? Strongly typed?
+    files = sdc.QueryAndDownload(
+        level=level, start_date=start_date, end_date=end_date, force=force
+    )
+
+    # TODO: save the files to the database
+
+    for file in files:
+        appUtils.copyFileToDestination(file, configFile.destination)
 
 
 @app.callback()

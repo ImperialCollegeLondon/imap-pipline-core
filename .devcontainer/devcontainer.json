@@ -30,7 +30,10 @@
     },
     "remoteEnv": {
         // add the pyenv bin and poetry to the PATH for the dev user vscode
-        "PATH": "/home/vscode/.pyenv/bin:/home/vscode/.local/bin:${containerEnv:PATH}"
+        "PATH": "/home/vscode/.pyenv/bin:/home/vscode/.local/bin:${containerEnv:PATH}",
+        "WEBPODA_AUTH_CODE": "${localEnv:WEBPODA_AUTH_CODE}",
+        "SDC_AUTH_CODE": "${localEnv:SDC_AUTH_CODE}",
+        "IMAP_DATA_ACCESS_URL": "${localEnv:IMAP_DATA_ACCESS_URL}",
     },
     "postCreateCommand": "pip install --user -U pre-commit && pre-commit install-hooks && pre-commit autoupdate",
     // install poetry in first startup in vscode

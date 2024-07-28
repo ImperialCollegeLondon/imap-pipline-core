@@ -66,7 +66,7 @@ class HKProcessor(FileProcessor):
 
         for apid, data in dataDict.items():
             time_key = next(iter(data.keys()))
-            time_data = appUtils.met_to_j2000ns(data[time_key])
+            time_data = appUtils.convertMETToJ2000ns(data[time_key])
 
             ds = xr.Dataset(
                 {
