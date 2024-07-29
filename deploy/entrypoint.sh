@@ -24,6 +24,10 @@ do
 
     imap-db query-db
 
+    imap-mag calibrate --config calibration_config.yml --method SpinAxisCalibrator imap_mag_l1b_norm-mago_20250511_v000.cdf
+
+    imap-mag apply --config calibration_application_config.yml --calibration calibration.json imap_mag_l1b_norm-mago_20250511_v000.cdf
+
     ls -l /data
 
     sleep 3600 # 1 Hour

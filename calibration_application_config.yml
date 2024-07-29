@@ -1,8 +1,8 @@
 source:
-  folder: tests/data/2025
+  folder: /data/science/imap/mag/l1b/2025/05
 
 work-folder: .work
 
 destination:
-  folder: output/
-  filename: L2.cdf
+  folder: /data/science/imap/mag/l2/2025/05
+  filename: imap_mag_l2_norm-mago_20250511_v000.cdf
