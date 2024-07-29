@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+echo "Starting IMAP MAG pipeline..."
+sleep 20
 
 imap-db create-db
 
