@@ -63,18 +63,11 @@ class SDC:
             )
 
             for date in date_range.to_pydatetime():
-                download_files = self.__check_download_needed(details, date, **options)
 
-                (new_version, previous_version) = self.__data_access.unique_version(
+                (version, previous_version) = self.__data_access.unique_version(
                     level=options["level"],
                     start_date=date,
                 )
-
-                if download_files:
-                    version = new_version
-                else:
-                    assert previous_version is not None
-                    version = previous_version
 
                 for var in details["variations"]:
                     files = self.__data_access.get_filename(

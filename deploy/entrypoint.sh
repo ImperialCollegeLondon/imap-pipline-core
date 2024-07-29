@@ -13,11 +13,14 @@ do
     # delete all data
     rm -rf /data/*
 
-    imap-mag fetch-binary --config config-hk-download.yaml --apid 1063 --start-date 2025-05-02 --end-date 2025-05-03
+    START_DATE='2025-05-02'
+    END_DATE='2025-05-03'
 
-    imap-mag process --config config-hk-process.yaml MAG_HSK_PW.pkts
+    imap-mag fetch-binary --config config-hk-download.yaml --apid 1063 --start-date $START_DATE --end-date $END_DATE
 
-    imap-mag fetch-science --start-date 2025-05-02 --end-date 2025-05-03 --config config-sci.yaml
+    imap-mag process --config config-hk-process.yaml power.pkts
+
+    imap-mag fetch-science --level l1b  --start-date $START_DATE --end-date $END_DATE --config config-sci.yml
 
     imap-db query-db
 

@@ -174,9 +174,10 @@ def fetch_binary(
 
 
 class LevelEnum(str, Enum):
-    level_1 = "l1"
+    level_1a = "l1a"
+    level_1b = "l1b"
+    level_1c = "l1c"
     level_2 = "l2"
-    level_3 = "l3"
 
 
 # E.g., imap-mag fetch-science --start-date 2025-05-02 --end-date 2025-05-03
@@ -214,14 +215,14 @@ def fetch_science(
 
     # TODO: any better way than passing a dictionary? Strongly typed?
     files = sdc.QueryAndDownload(
-        level=level, start_date=start_date, end_date=end_date, force=force
+        level=level.value, start_date=start_date, end_date=end_date, force=force
     )
 
     records = []
     for file in files:
         records.append(File(name=file.name, path=file.absolute().as_posix()))
 
-    db = DB()
+    db = DB.DB()
     db.insert_files(records)
 
     logging.info(f"Downloaded {len(files)} files and saved to database")
