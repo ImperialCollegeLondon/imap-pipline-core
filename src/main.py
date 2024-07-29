@@ -15,6 +15,17 @@ import yaml
 
 # app code
 from src import appConfig, appLogging, imapProcessing
+from src.mag_toolkit import CDFLoader
+from src.mag_toolkit.calibration.CalibrationApplicator import CalibrationApplicator
+from src.mag_toolkit.calibration.calibrationFormatProcessor import (
+    CalibrationFormatProcessor,
+)
+from src.mag_toolkit.calibration.Calibrator import (
+    Calibrator,
+    CalibratorType,
+    SpinAxisCalibrator,
+    SpinPlaneCalibrator,
+)
 
 app = typer.Typer()
 globalState = {"verbose": False}
@@ -77,21 +88,7 @@ def hello(name: str):
     print(f"Hello {name}")
 
 
-# E.g  imap-mag process --config config.yml solo_L2_mag-rtn-ll-internal_20240210_V00.cdf
-@app.command()
-def process(
-    config: Annotated[Path, typer.Option()] = Path("config.yml"),
-    file: str = typer.Argument(
-        help="The file name or pattern to match for the input file"
-    ),
-):
-    """Sample processing job."""
-    # TODO: semantic logging
-    # TODO: handle file system/cloud files - abstraction layer needed for files
-    # TODO: move shared logic to a library
-
-    configFile: appConfig.AppConfig = commandInit(config)
-
+def prepareWorkFile(file, configFile):
     logging.debug(f"Grabbing file matching {file} in {configFile.source.folder}")
 
     # get all files in \\RDS.IMPERIAL.AC.UK\rds\project\solarorbitermagnetometer\live\SO-MAG-Web\quicklooks_py\
@@ -127,11 +124,35 @@ def process(
     logging.debug(f"Copying {files[0]} to {workFile}")
     workFile = Path(shutil.copy2(files[0], configFile.work_folder))
 
+    return workFile
+
+
+# E.g  imap-mag process --config config.yml solo_L2_mag-rtn-ll-internal_20240210_V00.cdf
+@app.command()
+def process(
+    config: Annotated[Path, typer.Option()] = Path("config.yml"),
+    file: str = typer.Argument(
+        help="The file name or pattern to match for the input file"
+    ),
+):
+    """Sample processing job."""
+    # TODO: semantic logging
+    # TODO: handle file system/cloud files - abstraction layer needed for files
+    # TODO: move shared logic to a library
+
+    configFile: appConfig.AppConfig = commandInit(config)
+
+    workFile = prepareWorkFile(file, configFile)
+
     # TODO: do something with the data!
     fileProcessor = imapProcessing.dispatchFile(workFile)
     fileProcessor.initialize(configFile)
     result = fileProcessor.process(workFile)
 
+    copyFromWorkArea(result, configFile)
+
+
+def copyFromWorkArea(result, configFile):
     # copy the result to the destination
     destinationFile = Path(configFile.destination.folder)
 
@@ -146,6 +167,63 @@ def process(
     logging.info(f"Copying {result} to {destinationFile.absolute()}")
     completed = shutil.copy2(result, destinationFile)
     logging.info(f"Copy complete: {completed}")
+
+
+# imap-mag calibrate --config calibration_config.yml --method SpinAxisCalibrator imap_mag_l1b_norm-mago_20250502_v000.cdf
+@app.command()
+def calibrate(
+    config: Annotated[Path, typer.Option()] = Path("calibration_config.yml"),
+    method: Annotated[CalibratorType, typer.Option()] = "SpinAxisCalibrator",
+    input: str = typer.Argument(
+        help="The file name or pattern to match for the input file"
+    ),
+):
+    # TODO: Define specific calibration configuration
+    # Using AppConfig for now to piggyback off of configuration
+    # verification and work area setup
+    configFile: appConfig.AppConfig = commandInit(config)
+
+    workFile = prepareWorkFile(input, configFile)
+    calibrator: Calibrator
+
+    match method:
+        case CalibratorType.SPINAXIS:
+            calibrator = SpinAxisCalibrator()
+        case CalibratorType.SPINPLANE:
+            calibrator = SpinPlaneCalibrator()
+
+    inputData = CDFLoader.load_cdf(workFile)
+    calibration = calibrator.generateCalibration(inputData)
+
+    tempOutputFile = os.path.join(configFile.work_folder, "calibration.json")
+
+    result = CalibrationFormatProcessor.writeToFile(calibration, tempOutputFile)
+
+    copyFromWorkArea(result, configFile)
+
+
+# imap-mag apply --config calibration_application_config.yml --calibration calibration.json imap_mag_l1a_norm-mago_20250502_v000.cdf
+@app.command()
+def apply(
+    config: Annotated[Path, typer.Option()] = Path(
+        "calibration_application_config.yml"
+    ),
+    calibration: Annotated[str, typer.Option()] = "calibration.json",
+    input: str = typer.Argument(
+        help="The file name or pattern to match for the input file"
+    ),
+):
+    configFile: appConfig.AppConfig = commandInit(config)
+
+    workDataFile = prepareWorkFile(input, configFile)
+    workCalibrationFile = prepareWorkFile(calibration, configFile)
+    workOutputFile = os.path.join(configFile.work_folder, "l2_data.cdf")
+
+    applier = CalibrationApplicator()
+
+    L2_file = applier.apply(workCalibrationFile, workDataFile, workOutputFile)
+
+    copyFromWorkArea(L2_file, configFile)
 
 
 @app.callback()
