@@ -1,6 +1,7 @@
 """App configuration module."""
 
 from pathlib import Path
+from typing import Optional
 
 from pydantic import BaseModel
 from pydantic.config import ConfigDict
@@ -27,7 +28,7 @@ class AppConfig(BaseModel):
     source: Source
     work_folder: Path = Path(".work")
     destination: Destination
-    packet_definition: PacketDefinition
+    packet_definition: Optional[PacketDefinition] = None
 
     # pydantic configuration to allow hyphenated fields
     model_config = ConfigDict(alias_generator=hyphenize)
