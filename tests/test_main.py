@@ -96,4 +96,38 @@ def test_fetch_binary_downloads_hk_from_webpoda(tidyDataFolders):
 
     # Verify.
     assert result.exit_code == 0
-    assert Path("output/power.pkts").exists()
+    assert Path("output/power.pkts").exists()  #
+
+
+def test_calibration_creates_calibration_file():
+    result = runner.invoke(
+        app,
+        [
+            "calibrate",
+            "--config",
+            "calibration_config.yml",
+            "--method",
+            "SpinAxisCalibrator",
+            "imap_mag_l1a_norm-mago_20250502_v000.cdf",
+        ],
+    )
+    assert result.exit_code == 0
+    assert Path("output/calibration.json").exists()
+
+
+def test_application_creates_L2_file():
+    result = runner.invoke(
+        app,
+        [
+            "apply",
+            "--config",
+            "calibration_application_config.yml",
+            "--calibration",
+            "calibration.json",
+            "imap_mag_l1a_norm-mago_20250502_v000.cdf",
+        ],
+    )
+
+    print("\n" + str(result.stdout))
+    assert result.exit_code == 0
+    assert Path("output/L2.cdf").exists()
