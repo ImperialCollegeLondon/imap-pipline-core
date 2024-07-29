@@ -29,6 +29,16 @@ To use WebPODA APIs, an access token needs to be defined in the environment as `
     pre-commit install
     ```
 
+5. To use the docker /data mount you need a folder on your WSL and a user with a given UID
+
+```bash
+# in WSL on your HOST
+mkdir -p /mnt/imap-data
+sudo adduser -u 5678 --disabled-password --gecos "" appuser
+# you have created the user with the same UID as in the container. now grant the folder to the user
+chown -R appuser:appuser /mnt/imap-data
+```
+
 ### Build, pack and test
 
 ```bash
