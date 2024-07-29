@@ -41,12 +41,14 @@ def commandInit(config: Path) -> appConfig.AppConfig:
         raise typer.Abort()
     if config.is_file():
         configFileDict = yaml.safe_load(open(config))
-        logging.debug(f"Config file contents: {configFileDict}")
+        logging.debug(
+            "Config file loaded from %s with content %s: ", config, configFileDict
+        )
     elif config.is_dir():
-        logging.critical("Config is a directory, need a yml file")
+        logging.critical("Config %s is a directory, need a yml file", config)
         raise typer.Abort()
     elif not config.exists():
-        logging.critical("The config doesn't exist")
+        logging.critical("The config at $s does not exist", config)
         raise typer.Abort()
     else:
         pass
@@ -130,10 +132,10 @@ def prepareWorkFile(file, configFile):
     return workFile
 
 
-# E.g  imap-mag process --config config.yml solo_L2_mag-rtn-ll-internal_20240210_V00.cdf
+# E.g  imap-mag process --config config.yaml solo_L2_mag-rtn-ll-internal_20240210_V00.cdf
 @app.command()
 def process(
-    config: Annotated[Path, typer.Option()] = Path("config.yml"),
+    config: Annotated[Path, typer.Option()] = Path("config.yaml"),
     file: str = typer.Argument(
         help="The file name or pattern to match for the input file"
     ),
@@ -168,7 +170,7 @@ def fetch_binary(
     apid: Annotated[int, typer.Option(help="ApID to download")],
     start_date: Annotated[str, typer.Option(help="Start date for the download")],
     end_date: Annotated[str, typer.Option(help="End date for the download")],
-    config: Annotated[Path, typer.Option()] = Path("config.yml"),
+    config: Annotated[Path, typer.Option()] = Path("config.yaml"),
 ):
     configFile: appConfig.AppConfig = commandInit(config)
 
@@ -215,7 +217,7 @@ def fetch_science(
         bool,
         typer.Option("--force", "-f", help="Force download even if the file exists"),
     ] = False,
-    config: Annotated[Path, typer.Option()] = Path("config-sci.yml"),
+    config: Annotated[Path, typer.Option()] = Path("config-sci.yaml"),
 ):
     configFile: appConfig.AppConfig = commandInit(config)
 
@@ -247,10 +249,10 @@ def fetch_science(
     #     appUtils.copyFileToDestination(file, configFile.destination)
 
 
-# imap-mag calibrate --config calibration_config.yml --method SpinAxisCalibrator imap_mag_l1b_norm-mago_20250502_v000.cdf
+# imap-mag calibrate --config calibration_config.yaml --method SpinAxisCalibrator imap_mag_l1b_norm-mago_20250502_v000.cdf
 @app.command()
 def calibrate(
-    config: Annotated[Path, typer.Option()] = Path("calibration_config.yml"),
+    config: Annotated[Path, typer.Option()] = Path("calibration_config.yaml"),
     method: Annotated[CalibratorType, typer.Option()] = "SpinAxisCalibrator",
     input: str = typer.Argument(
         help="The file name or pattern to match for the input file"
@@ -280,11 +282,11 @@ def calibrate(
     appUtils.copyFileToDestination(result, configFile.destination)
 
 
-# imap-mag apply --config calibration_application_config.yml --calibration calibration.json imap_mag_l1a_norm-mago_20250502_v000.cdf
+# imap-mag apply --config calibration_application_config.yaml --calibration calibration.json imap_mag_l1a_norm-mago_20250502_v000.cdf
 @app.command()
 def apply(
     config: Annotated[Path, typer.Option()] = Path(
-        "calibration_application_config.yml"
+        "calibration_application_config.yaml"
     ),
     calibration: Annotated[str, typer.Option()] = "calibration.json",
     input: str = typer.Argument(

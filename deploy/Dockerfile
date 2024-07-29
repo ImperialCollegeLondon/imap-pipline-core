@@ -11,6 +11,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 COPY deploy/entrypoint.sh /app/entrypoint.sh
+COPY *.yaml /app/
 COPY dist/python${PYTHON_VERSION}/${TOOL_PACKAGE} /app/python${PYTHON_VERSION}/
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder

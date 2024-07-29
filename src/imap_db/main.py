@@ -81,7 +81,7 @@ def upgrade_db():
     # combine them in OS agnostic way
     script_location = os.path.join(folder, script_location)
 
-    print("Running DB migrations in %r on %r", script_location, url)
+    print("Running DB migrations in %r", script_location)
 
     config.set_main_option("script_location", script_location)
     config.set_main_option("sqlalchemy.url", url)

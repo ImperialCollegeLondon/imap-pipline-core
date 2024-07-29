@@ -11,6 +11,7 @@ readme = "README.md"
 packages = [
     { include = "src/imap_mag" },
     { include = "src/imap_db" },
+    { include = "src/mag_toolkit" },
 ]
 
 [tool.poetry.dependencies]
