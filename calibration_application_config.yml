@@ -1,0 +1,8 @@
+source:
+  folder: tests/data/2025
+
+work-folder: .work
+
+destination:
+  folder: output/
+  filename: L2.cdf
