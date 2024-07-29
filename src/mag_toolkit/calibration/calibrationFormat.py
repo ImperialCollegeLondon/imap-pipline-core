@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional, Self
+from typing import Optional
 
 from pydantic import BaseModel, model_validator
 
@@ -22,7 +22,7 @@ class OffsetCollection(BaseModel):
     Z: list[float]
 
     @model_validator(mode="after")
-    def check_lengths_match(self) -> Self:
+    def check_lengths_match(self):
         if (
             len(self.X) != len(self.Y)
             or len(self.Y) != len(self.Z)

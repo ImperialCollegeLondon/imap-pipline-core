@@ -2,8 +2,6 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from enum import Enum
 
-import numpy as np
-
 from src.mag_toolkit.calibration import MatlabWrapper
 from src.mag_toolkit.calibration.calibrationFormat import (
     CalibrationFormat,
@@ -14,21 +12,25 @@ from src.mag_toolkit.calibration.calibrationFormat import (
 
 
 class CalibratorType(str, Enum):
-    SPINAXIS = ("SpinAxisCalibrator",)
+    SPINAXIS = "SpinAxisCalibrator"
     SPINPLANE = "SpinPlaneCalibrator"
 
 
 class Calibrator(ABC):
     def generateOffsets(self, data) -> OffsetCollection:
         """Generates a set of offsets."""
-        (timestamps, x_offsets, y_offsets, z_offsets) = self.runCalibration(data)
+        basicCalibration = self.runCalibration(data)
 
-        offsetCollection = OffsetCollection(X=x_offsets, Y=y_offsets, Z=z_offsets)
+        offsetCollection = OffsetCollection(
+            X=basicCalibration.x_offsets,
+            Y=basicCalibration.y_offsets,
+            Z=basicCalibration.z_offsets,
+        )
 
         sensor_name = "MAGO"
 
         singleCalibration = SingleCalibration(
-            timestamps=timestamps,
+            timestamps=basicCalibration.timestamps,
             offsets=offsetCollection,
             units=Unit.NT,
             instrument=sensor_name,
@@ -56,14 +58,9 @@ class SpinAxisCalibrator(Calibrator):
         self.name = CalibratorType.SPINAXIS
 
     def runCalibration(self, data):
-        (timestamps, z_offsets) = MatlabWrapper.simulateSpinAxisCalibration(data)
+        calibration = MatlabWrapper.simulateSpinAxisCalibration(data)
 
-        return (
-            timestamps,
-            np.zeros(len(z_offsets)),
-            np.zeros(len(z_offsets)),
-            z_offsets,
-        )
+        return calibration
 
 
 class SpinPlaneCalibrator(Calibrator):
@@ -71,8 +68,6 @@ class SpinPlaneCalibrator(Calibrator):
         self.name = CalibratorType.SPINPLANE
 
     def runCalibration(self, data):
-        (timestamps, x_offsets, y_offsets) = (
-            MatlabWrapper.simulateSpinPlaneCalibration()
-        )
+        calibration = MatlabWrapper.simulateSpinPlaneCalibration()
 
-        return (timestamps, x_offsets, y_offsets, np.zeros(len(x_offsets)))
+        return calibration
