@@ -99,7 +99,7 @@ def test_fetch_binary_downloads_hk_from_webpoda(tidyDataFolders):
     assert Path("output/power.pkts").exists()  #
 
 
-def test_calibration_creates_calibration_file():
+def test_calibration_creates_calibration_file(tidyDataFolders):
     result = runner.invoke(
         app,
         [
@@ -115,7 +115,7 @@ def test_calibration_creates_calibration_file():
     assert Path("output/calibration.json").exists()
 
 
-def test_application_creates_L2_file():
+def test_application_creates_L2_file(tidyDataFolders):
     result = runner.invoke(
         app,
         [

@@ -15,7 +15,6 @@ import typer
 import yaml
 
 from src.imap_db.model import File
-
 from src.mag_toolkit import CDFLoader
 from src.mag_toolkit.calibration.CalibrationApplicator import CalibrationApplicator
 from src.mag_toolkit.calibration.calibrationFormatProcessor import (
@@ -28,11 +27,8 @@ from src.mag_toolkit.calibration.Calibrator import (
     SpinPlaneCalibrator,
 )
 
-# app code
 from . import DB, SDC, appConfig, appLogging, appUtils, imapProcessing, webPODA
 from .sdcApiClient import SDCApiClient
-from src import appConfig, appLogging, imapProcessing
-
 
 app = typer.Typer()
 globalState = {"verbose": False}
