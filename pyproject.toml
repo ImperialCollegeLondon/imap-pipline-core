@@ -1,3 +1,7 @@
+[project]
+requires-python = ">=3.10"
+name = "imap-mag"
+
 [tool.poetry]
 name = "imap-mag"
 version = "0.1.0"
@@ -9,7 +13,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.13"
+python = ">=3.10,<3.13"
 pyyaml = "^6.0.1"
 typing-extensions = "^4.9.0"
 pydantic = "^2.6.1"
@@ -17,6 +21,8 @@ space-packet-parser = "^4.2.0"
 xarray = "^2024.6.0"
 numpy = "^2.0.1"
 typer = "^0.12.3"
+requests = "^2.32.3"
+pandas = "^2.2.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.1"
@@ -35,9 +41,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry-pyinstaller-plugin.scripts]
 imap-mag = { source = "src/main.py", type = "onefile", bundle = false }
-
-[tool.ruff]
-target-version = "py312"
 
 [tool.ruff.lint]
 select = [

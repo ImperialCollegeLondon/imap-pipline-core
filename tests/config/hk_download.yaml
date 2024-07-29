@@ -1,0 +1,11 @@
+source:
+  folder: tests/data/2025
+
+work-folder: .work
+
+destination:
+  folder: output/
+  filename: power.pkts
+
+packet-definition:
+  hk: src/xtce/tlm_20240724.xml

@@ -14,7 +14,7 @@ import typer
 import yaml
 
 # app code
-from src import appConfig, appLogging, imapProcessing
+from src import appConfig, appLogging, appUtils, imapProcessing, webPODA
 
 app = typer.Typer()
 globalState = {"verbose": False}
@@ -80,10 +80,10 @@ def hello(name: str):
 # E.g  imap-mag process --config config.yml solo_L2_mag-rtn-ll-internal_20240210_V00.cdf
 @app.command()
 def process(
+    file: Annotated[
+        str, typer.Argument(help="The file name or pattern to match for the input file")
+    ],
     config: Annotated[Path, typer.Option()] = Path("config.yml"),
-    file: str = typer.Argument(
-        help="The file name or pattern to match for the input file"
-    ),
 ):
     """Sample processing job."""
     # TODO: semantic logging
@@ -132,20 +132,41 @@ def process(
     fileProcessor.initialize(configFile)
     result = fileProcessor.process(workFile)
 
-    # copy the result to the destination
-    destinationFile = Path(configFile.destination.folder)
+    appUtils.copyFileToDestination(result, configFile.destination)
 
-    # if destination folder does not exists create it
-    if not destinationFile.exists():
-        logging.debug(f"Creating destination folder {destinationFile}")
-        os.makedirs(destinationFile)
 
-    if configFile.destination.filename:
-        destinationFile = destinationFile / configFile.destination.filename
+# E.g., imap-mag fetch-binary --apid 1063 --start-date 2025-05-02 --end-date 2025-05-03
+@app.command()
+def fetch_binary(
+    auth_code: Annotated[
+        str,
+        typer.Option(
+            envvar="WEBPODA_AUTH_CODE",
+            help="WebPODA authentication code",
+        ),
+    ],
+    apid: Annotated[int, typer.Option(help="ApID to download")],
+    start_date: Annotated[str, typer.Option(help="Start date for the download")],
+    end_date: Annotated[str, typer.Option(help="End date for the download")],
+    config: Annotated[Path, typer.Option()] = Path("config.yml"),
+):
+    configFile: appConfig.AppConfig = commandInit(config)
 
-    logging.info(f"Copying {result} to {destinationFile.absolute()}")
-    completed = shutil.copy2(result, destinationFile)
-    logging.info(f"Copy complete: {completed}")
+    if not auth_code:
+        logging.critical("No WebPODA authorization code provided")
+        raise typer.Abort()
+
+    packet: str = appUtils.getPacketFromApID(apid)
+    logging.info(f"Downloading raw packet {packet} from {start_date} to {end_date}.")
+
+    poda = webPODA.WebPODA(auth_code, configFile.work_folder)
+    result: str = poda.download(
+        packet=packet,
+        start_date=appUtils.convertToDatetime(start_date),
+        end_date=appUtils.convertToDatetime(end_date),
+    )
+
+    appUtils.copyFileToDestination(result, configFile.destination)
 
 
 @app.callback()
