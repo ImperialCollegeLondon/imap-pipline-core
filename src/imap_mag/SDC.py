@@ -63,7 +63,6 @@ class SDC:
             )
 
             for date in date_range.to_pydatetime():
-
                 (version, previous_version) = self.__data_access.unique_version(
                     level=options["level"],
                     start_date=date,

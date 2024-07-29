@@ -105,7 +105,7 @@ def test_calibration_creates_calibration_file(tidyDataFolders):
         [
             "calibrate",
             "--config",
-            "calibration_config.yml",
+            "tests/config/calibration_config.yml",
             "--method",
             "SpinAxisCalibrator",
             "imap_mag_l1a_norm-mago_20250502_v000.cdf",
@@ -121,7 +121,7 @@ def test_application_creates_L2_file(tidyDataFolders):
         [
             "apply",
             "--config",
-            "calibration_application_config.yml",
+            "tests/config/calibration_application_config.yml",
             "--calibration",
             "calibration.json",
             "imap_mag_l1a_norm-mago_20250502_v000.cdf",
