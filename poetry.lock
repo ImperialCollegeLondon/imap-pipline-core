@@ -644,13 +644,18 @@ version = "0.7.0"
 description = "IMAP SDC Data Access"
 optional = false
 python-versions = "*"
-files = [
-    {file = "imap_data_access-0.7.0.tar.gz", hash = "sha256:f0db935949d048394fc554b308b1e4a1572a18acd41636462d37c309c7cb4c9d"},
-]
+files = []
+develop = false
 
 [package.extras]
-dev = ["imap_data_access[test]", "pre-commit", "ruff"]
+dev = ["imap-data-access[test]", "pre-commit", "ruff"]
 test = ["pytest", "pytest-cov"]
+
+[package.source]
+type = "git"
+url = "https://github.com/IMAP-Science-Operations-Center/imap-data-access.git"
+reference = "main"
+resolved_reference = "23df7b3b47c5ce573ca91c4da9996c8b06bfde68"
 
 [[package]]
 name = "importlib-resources"
@@ -1483,13 +1488,13 @@ files = [
 
 [[package]]
 name = "setuptools"
-version = "72.0.0"
+version = "72.1.0"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "setuptools-72.0.0-py3-none-any.whl", hash = "sha256:98b4d786a12fadd34eabf69e8d014b84e5fc655981e4ff419994700434ace132"},
-    {file = "setuptools-72.0.0.tar.gz", hash = "sha256:5a0d9c6a2f332881a0153f629d8000118efd33255cfa802757924c53312c76da"},
+    {file = "setuptools-72.1.0-py3-none-any.whl", hash = "sha256:5a03e1860cf56bb6ef48ce186b0e557fdba433237481a9a625176c2831be15d1"},
+    {file = "setuptools-72.1.0.tar.gz", hash = "sha256:8d243eff56d095e5817f796ede6ae32941278f542e0f941867cc05ae52b162ec"},
 ]
 
 [package.extras]
@@ -1883,13 +1888,13 @@ files = [
 
 [[package]]
 name = "xarray"
-version = "2024.6.0"
+version = "2024.7.0"
 description = "N-D labeled arrays and datasets in Python"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "xarray-2024.6.0-py3-none-any.whl", hash = "sha256:721a7394e8ec3d592b2d8ebe21eed074ac077dc1bb1bd777ce00e41700b4866c"},
-    {file = "xarray-2024.6.0.tar.gz", hash = "sha256:0b91e0bc4dc0296947947640fe31ec6e867ce258d2f7cbc10bedf4a6d68340c7"},
+    {file = "xarray-2024.7.0-py3-none-any.whl", hash = "sha256:1b0fd51ec408474aa1f4a355d75c00cc1c02bd425d97b2c2e551fd21810e7f64"},
+    {file = "xarray-2024.7.0.tar.gz", hash = "sha256:4cae512d121a8522d41e66d942fb06c526bc1fd32c2c181d5fe62fe65b671638"},
 ]
 
 [package.dependencies]
@@ -1908,4 +1913,4 @@ viz = ["matplotlib", "nc-time-axis", "seaborn"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "a481e3b5953e1230367db502f6761f9b3097777f0ce32c629fb37847b969fdf4"
+content-hash = "d58a41b1a15cf44477eb2d961a7e64ec3d4349e6b32a62f8709e116e18436c20"
