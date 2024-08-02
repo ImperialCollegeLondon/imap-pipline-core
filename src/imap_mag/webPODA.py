@@ -89,7 +89,7 @@ class WebPODA(IWebPODA):
         end_value: str = end_date.strftime("%Y-%m-%dT%H:%M:%S")
 
         url = (
-            f"{urllib.parse.urljoin(self.__webpoda_url, "packets/SID2/")}"
+            f"{urllib.parse.urljoin(self.__webpoda_url, 'packets/SID2/')}"
             f"{packet}.{extension}?"
             f"{time_var}%3E={start_value}&"
             f"{time_var}%3C{end_value}&"
