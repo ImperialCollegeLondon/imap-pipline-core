@@ -129,8 +129,8 @@ class SDCDataAccess(ISDCDataAccess):
         self, **options: typing_extensions.Unpack[FileOptions]
     ) -> list[dict[str, str]] | None:
         file_details: list[dict[str, str]] = self.query(**options)
-        file_names: str = [value["file_path"] for value in file_details]
 
+        file_names: str = ", ".join([value["file_path"] for value in file_details])
         logging.info(f"Found {len(file_details)} matching files:\n{file_names}")
 
         return file_details
