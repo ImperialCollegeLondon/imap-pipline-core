@@ -246,10 +246,11 @@ def fetch_science(
     for file in files:
         appUtils.copyFileToDestination(file, configFile.destination)
 
-    db = DB.DB()
-    db.insert_files(records)
+    if configFile.destination.export_to_database:
+        db = DB.DB()
+        db.insert_files(records)
 
-    logging.info(f"Downloaded {len(files)} files and saved to database")
+        logging.info(f"Downloaded {len(files)} files and saved to database")
 
 
 # imap-mag calibrate --config calibration_config.yaml --method SpinAxisCalibrator imap_mag_l1b_norm-mago_20250502_v000.cdf

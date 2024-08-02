@@ -12,13 +12,16 @@ def create_serialize_config(
     destination_file: str = "results.csv",
     webpoda_url: str | None = None,
     sdc_url: str | None = None,
+    export_to_database: bool = False,
 ) -> tuple[appConfig.AppConfig, str]:
     """Create and serialize a configuration object."""
 
     config = appConfig.AppConfig(
         source=appConfig.Source(folder=source),
         destination=appConfig.Destination(
-            folder=destination_folder, filename=destination_file
+            folder=destination_folder,
+            filename=destination_file,
+            export_to_database=export_to_database,
         ),
         api=appConfig.API(webpoda_url=webpoda_url, sdc_url=sdc_url),
     )

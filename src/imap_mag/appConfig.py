@@ -19,6 +19,7 @@ class Source(BaseModel):
 class Destination(BaseModel):
     folder: Path = Path(".")
     filename: str
+    export_to_database: bool = True
 
 
 class PacketDefinition(BaseModel):
