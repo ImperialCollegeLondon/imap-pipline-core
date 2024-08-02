@@ -2,6 +2,7 @@
 """Tests for `app` package."""
 # pylint: disable=redefined-outer-name
 
+import json
 import os
 from pathlib import Path
 
@@ -117,6 +118,82 @@ def test_fetch_binary_downloads_hk_from_webpoda(wiremock_manager):  # noqa: F811
     with (
         open("output/power.pkts", "rb") as output,
         open(binary_file, "rb") as input,
+    ):
+        assert output.read() == input.read()
+
+
+def test_fetch_science_downloads_cdf_from_sdc(wiremock_manager):  # noqa: F811
+    # Set up.
+    query_response: list[dict[str, str]] = [
+        {
+            "file_path": "imap/mag/l1b/2025/05/imap_mag_l1b_norm-magi_20250502_v000.cdf",
+            "instrument": "mag",
+            "data_level": "l1b",
+            "descriptor": "norm-magi",
+            "start_date": "20250502",
+            "repointing": None,
+            "version": "v000",
+            "extension": "cdf",
+            "ingestion_date": "2024-07-16 10:29:02",
+        }
+    ]
+    cdf_file = os.path.abspath(
+        "tests/data/2025/imap_mag_l1b_norm-mago_20250502_v000.cdf"
+    )
+
+    wiremock_manager.add_string_mapping(
+        "/query?instrument=mag&data_level=l1b&descriptor=norm-magi&start_date=20250502&version=latest&extension=cdf",
+        json.dumps(query_response),
+    )
+    wiremock_manager.add_file_mapping(
+        "/download/imap/mag/l1b/2025/05/imap_mag_l1b_norm-magi_20250502_v000.cdf",
+        cdf_file,
+    )
+    wiremock_manager.add_string_mapping(
+        "/query?instrument=mag&data_level=l1b&descriptor=norm-mago&start_date=20250502&version=latest&extension=cdf",
+        json.dumps({}),
+    )
+    wiremock_manager.add_string_mapping(
+        "/query?instrument=mag&data_level=l1b&descriptor=burst-magi&start_date=20250502&version=latest&extension=cdf",
+        json.dumps({}),
+    )
+    wiremock_manager.add_string_mapping(
+        "/query?instrument=mag&data_level=l1b&descriptor=burst-mago&start_date=20250502&version=latest&extension=cdf",
+        json.dumps({}),
+    )
+
+    (_, config_file) = create_serialize_config(
+        destination_file="result.cdf", sdc_url=wiremock_manager.get_url().rstrip("/")
+    )
+
+    # Exercise.
+    result = runner.invoke(
+        app,
+        [
+            "--verbose",
+            "fetch-science",
+            "--config",
+            config_file,
+            "--auth-code",
+            "12345",
+            "--level",
+            "l1b",
+            "--start-date",
+            "2025-05-02",
+            "--end-date",
+            "2025-05-02",
+        ],
+    )
+
+    print("\n" + str(result.stdout))
+
+    # Verify.
+    assert result.exit_code == 0
+    assert Path("output/result.cdf").exists()
+
+    with (
+        open("output/result.cdf", "rb") as output,
+        open(cdf_file, "rb") as input,
     ):
         assert output.read() == input.read()
 
