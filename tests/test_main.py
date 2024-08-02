@@ -10,8 +10,8 @@ import pytest
 from imap_mag.main import app
 from typer.testing import CliRunner
 
-from .utils import create_serialize_config
-from .wiremock_utils import wiremock_manager  # noqa: F401
+from .testUtils import create_serialize_config
+from .wiremockUtils import wiremock_manager  # noqa: F401
 
 runner = CliRunner()
 
