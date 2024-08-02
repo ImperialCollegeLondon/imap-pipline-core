@@ -39,6 +39,7 @@ class AppConfig(BaseModel):
     api: Optional[API] = None
 
     def __init__(self, **kwargs):
+		# replace hypens with underscores so that you can build config from constructor args, and still have them mapped to the hyphen split property names in the YAML files
         kwargs = dict((key.replace("_", "-"), value) for (key, value) in kwargs.items())
         super().__init__(**kwargs)
 
