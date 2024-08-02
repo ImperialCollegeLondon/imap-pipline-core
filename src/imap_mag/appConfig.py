@@ -25,12 +25,17 @@ class PacketDefinition(BaseModel):
     hk: Path
 
 
+class API(BaseModel):
+    webpoda_url: Optional[str] = None
+    sdc_url: Optional[str] = None
+
+
 class AppConfig(BaseModel):
     source: Source
     work_folder: Path = Path(".work")
     destination: Destination
     packet_definition: Optional[PacketDefinition] = None
-    webpoda_url: str = "https://lasp.colorado.edu/ops/imap/poda/dap2/"
+    api: Optional[API] = None
 
     def __init__(self, **kwargs):
         kwargs = dict((key.replace("_", "-"), value) for (key, value) in kwargs.items())

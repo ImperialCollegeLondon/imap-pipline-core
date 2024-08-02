@@ -10,7 +10,8 @@ def create_serialize_config(
     source: Path = Path("."),
     destination_folder: Path = Path("output"),
     destination_file: str = "results.csv",
-    webpoda_url: str = "https://lasp.colorado.edu/ops/imap/poda/dap2/packets/SID2/",
+    webpoda_url: str | None = None,
+    sdc_url: str | None = None,
 ) -> tuple[appConfig.AppConfig, str]:
     """Create and serialize a configuration object."""
 
@@ -19,7 +20,7 @@ def create_serialize_config(
         destination=appConfig.Destination(
             folder=destination_folder, filename=destination_file
         ),
-        webpoda_url=webpoda_url,
+        api=appConfig.API(webpoda_url=webpoda_url, sdc_url=sdc_url),
     )
 
     if not os.path.exists(config.work_folder):

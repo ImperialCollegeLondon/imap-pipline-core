@@ -36,12 +36,16 @@ class WebPODA(IWebPODA):
     __auth_code: str
     __output_dir: Path
 
-    def __init__(self, webpoda_url: str, auth_code: str, output_dir: Path) -> None:
+    def __init__(
+        self, auth_code: str, output_dir: Path, webpoda_url: str | None = None
+    ) -> None:
         """Initialize WebPODA interface."""
 
-        self.__webpoda_url = webpoda_url
         self.__auth_code = auth_code
         self.__output_dir = output_dir
+        self.__webpoda_url = (
+            webpoda_url or "https://lasp.colorado.edu/ops/imap/poda/dap2/"
+        )
 
     def download(self, **options: Unpack[DownloadOptions]) -> Path:
         """Download packet data from WebPODA."""

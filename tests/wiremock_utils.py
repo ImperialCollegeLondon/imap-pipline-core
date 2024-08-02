@@ -27,6 +27,22 @@ class WireMockManager:
     def get_url(self) -> str:
         return self.__mock_container.get_url("/")
 
+    def add_string_mapping(
+        self,
+        url: str,
+        body: str,
+    ) -> None:
+        Mappings.create_mapping(
+            Mapping(
+                request=MappingRequest(
+                    method=HttpMethods.GET,
+                    url=url,
+                ),
+                response=MappingResponse(status=200, body=body),
+                persistent=False,
+            )
+        )
+
     def add_file_mapping(
         self,
         url: str,
