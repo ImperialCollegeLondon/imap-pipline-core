@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Optional
 
 from pydantic import BaseModel
+from pydantic.aliases import AliasGenerator
 from pydantic.config import ConfigDict
 
 
@@ -29,6 +30,15 @@ class AppConfig(BaseModel):
     work_folder: Path = Path(".work")
     destination: Destination
     packet_definition: Optional[PacketDefinition] = None
+    webpoda_url: str = "https://lasp.colorado.edu/ops/imap/poda/dap2/"
+
+    def __init__(self, **kwargs):
+        kwargs = dict((key.replace("_", "-"), value) for (key, value) in kwargs.items())
+        super().__init__(**kwargs)
 
     # pydantic configuration to allow hyphenated fields
-    model_config = ConfigDict(alias_generator=hyphenize)
+    model_config = ConfigDict(
+        alias_generator=AliasGenerator(
+            validation_alias=hyphenize, serialization_alias=hyphenize
+        )
+    )

@@ -9,10 +9,13 @@ import pytest
 from imap_mag.main import app
 from typer.testing import CliRunner
 
+from .utils import create_serialize_config
+from .wiremock_utils import wiremock_manager  # noqa: F401
+
 runner = CliRunner()
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def tidyDataFolders():
     os.system("rm -rf .work")
     os.system("rm -rf output/*")
@@ -26,7 +29,7 @@ def test_app_says_hello():
     assert "Hello Bob" in result.stdout
 
 
-def test_process_with_valid_config_does_not_error(tidyDataFolders):
+def test_process_with_valid_config_does_not_error():
     result = runner.invoke(
         app,
         [
@@ -43,7 +46,7 @@ def test_process_with_valid_config_does_not_error(tidyDataFolders):
     assert Path("output/result.cdf").exists()
 
 
-def test_process_with_binary_hk_converts_to_csv(tidyDataFolders):
+def test_process_with_binary_hk_converts_to_csv():
     # Set up.
     expectedHeader = "epoch,shcoarse,pus_spare1,pus_version,pus_spare2,pus_stype,pus_ssubtype,hk_strucid,p1v5v,p1v8v,p3v3v,p2v5v,p8v,n8v,icu_temp,p2v4v,p1v5i,p1v8i,p3v3i,p2v5i,p8vi,n8vi,fob_temp,fib_temp,magosatflagx,magosatflagy,magosatflagz,magisatflagx,magisatflagy,magisatflagz,spare1,magorange,magirange,spare2,magitfmisscnt,version,type,sec_hdr_flg,pkt_apid,seq_flgs,src_seq_ctr,pkt_len\n"
     expectedFirstLine = "799424368184000000,483848304,0,1,0,3,25,3,1.52370834,1.82973516,3.3652049479999997,2.54942028,9.735992639,-9.7267671632,19.470153600000003,2.36297684,423.7578925213,18.436028516,116.40531765999998,87.2015252,119.75070000000001,90.32580000000002,19.640128302955475,19.482131117873905,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1063,3,0,43\n"
@@ -75,14 +78,27 @@ def test_process_with_binary_hk_converts_to_csv(tidyDataFolders):
         assert expectedNumRows == len(lines)
 
 
-def test_fetch_binary_downloads_hk_from_webpoda(tidyDataFolders):
+def test_fetch_binary_downloads_hk_from_webpoda(wiremock_manager):  # noqa: F811
+    # Set up.
+    binary_file = os.path.abspath("tests/data/2025/MAG_HSK_PW.pkts")
+
+    wiremock_manager.add_file_mapping(
+        "/packets/SID2/MAG_HSK_PW.bin?time%3E=2025-05-02T00:00:00&time%3C2025-05-03T00:00:00&project(packet)",
+        binary_file,
+    )
+
+    (_, config_file) = create_serialize_config(
+        destination_file="power.pkts", webpoda_url=wiremock_manager.get_url()
+    )
+
     # Exercise.
     result = runner.invoke(
         app,
         [
+            "--verbose",
             "fetch-binary",
             "--config",
-            "tests/config/hk_download.yaml",
+            config_file,
             "--apid",
             "1063",
             "--start-date",
@@ -96,10 +112,16 @@ def test_fetch_binary_downloads_hk_from_webpoda(tidyDataFolders):
 
     # Verify.
     assert result.exit_code == 0
-    assert Path("output/power.pkts").exists()  #
+    assert Path("output/power.pkts").exists()
+
+    with (
+        open("output/power.pkts", "rb") as output,
+        open(binary_file, "rb") as input,
+    ):
+        assert output.read() == input.read()
 
 
-def test_calibration_creates_calibration_file(tidyDataFolders):
+def test_calibration_creates_calibration_file():
     result = runner.invoke(
         app,
         [
@@ -115,7 +137,7 @@ def test_calibration_creates_calibration_file(tidyDataFolders):
     assert Path("output/calibration.json").exists()
 
 
-def test_application_creates_L2_file(tidyDataFolders):
+def test_application_creates_L2_file():
     result = runner.invoke(
         app,
         [

@@ -34,6 +34,9 @@
         "WEBPODA_AUTH_CODE": "${localEnv:WEBPODA_AUTH_CODE}",
         "SDC_AUTH_CODE": "${localEnv:SDC_AUTH_CODE}",
         "IMAP_DATA_ACCESS_URL": "${localEnv:IMAP_DATA_ACCESS_URL}",
+        // Define WireMock variables to connect Docker outside of Docker.
+        "WIREMOCK_DIND": "1",
+        "TESTCONTAINERS_HOST_OVERRIDE": "host.docker.internal"
     },
     "postCreateCommand": "pip install --user -U pre-commit && pre-commit install-hooks && pre-commit autoupdate",
     // install poetry in first startup in vscode

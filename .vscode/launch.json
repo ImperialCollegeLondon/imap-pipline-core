@@ -1,6 +1,21 @@
 {
     "configurations": [
         {
+            "console": "integratedTerminal",
+            "env": {
+                "TESTCONTAINERS_HOST_OVERRIDE": "host.docker.internal",
+                "WIREMOCK_DIND": "1"
+            },
+            "justMyCode": false,
+            "name": "Python: Debug Tests",
+            "program": "${file}",
+            "purpose": [
+                "debug-test"
+            ],
+            "request": "launch",
+            "type": "debugpy"
+        },
+        {
             "args": [
                 "process",
                 "--config",

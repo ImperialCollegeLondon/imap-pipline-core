@@ -48,7 +48,7 @@ def commandInit(config: Path) -> appConfig.AppConfig:
         logging.critical("Config %s is a directory, need a yml file", config)
         raise typer.Abort()
     elif not config.exists():
-        logging.critical("The config at $s does not exist", config)
+        logging.critical("The config at %s does not exist", config)
         raise typer.Abort()
     else:
         pass
@@ -181,7 +181,7 @@ def fetch_binary(
     packet: str = appUtils.getPacketFromApID(apid)
     logging.info(f"Downloading raw packet {packet} from {start_date} to {end_date}.")
 
-    poda = webPODA.WebPODA(auth_code, configFile.work_folder)
+    poda = webPODA.WebPODA(configFile.webpoda_url, auth_code, configFile.work_folder)
     result: str = poda.download(
         packet=packet,
         start_date=appUtils.convertToDatetime(start_date),
