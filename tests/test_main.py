@@ -4,6 +4,7 @@
 
 import json
 import os
+import re
 from pathlib import Path
 
 import pytest
@@ -144,22 +145,19 @@ def test_fetch_science_downloads_cdf_from_sdc(wiremock_manager):  # noqa: F811
     wiremock_manager.add_string_mapping(
         "/query?instrument=mag&data_level=l1b&descriptor=norm-magi&start_date=20250502&version=latest&extension=cdf",
         json.dumps(query_response),
+        priority=1,
     )
     wiremock_manager.add_file_mapping(
         "/download/imap/mag/l1b/2025/05/imap_mag_l1b_norm-magi_20250502_v000.cdf",
         cdf_file,
     )
     wiremock_manager.add_string_mapping(
-        "/query?instrument=mag&data_level=l1b&descriptor=norm-mago&start_date=20250502&version=latest&extension=cdf",
+        re.escape("/query?instrument=mag&data_level=l1b&descriptor=")
+        + ".*"
+        + re.escape("&start_date=20250502&version=latest&extension=cdf"),
         json.dumps({}),
-    )
-    wiremock_manager.add_string_mapping(
-        "/query?instrument=mag&data_level=l1b&descriptor=burst-magi&start_date=20250502&version=latest&extension=cdf",
-        json.dumps({}),
-    )
-    wiremock_manager.add_string_mapping(
-        "/query?instrument=mag&data_level=l1b&descriptor=burst-mago&start_date=20250502&version=latest&extension=cdf",
-        json.dumps({}),
+        pattern=True,
+        priority=2,
     )
 
     (_, config_file) = create_serialize_config(

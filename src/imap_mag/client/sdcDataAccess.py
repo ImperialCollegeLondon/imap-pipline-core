@@ -104,7 +104,8 @@ class SDCDataAccess(ISDCDataAccess):
         try:
             imap_data_access.upload(file_name)
         except imap_data_access.io.IMAPDataAccessError as e:
-            logging.warn(f"Upload failed: {e}")
+            logging.error(f"Upload failed: {e}")
+            raise e
 
     def query(
         self, **options: typing_extensions.Unpack[QueryOptions]

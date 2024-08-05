@@ -31,17 +31,29 @@ class WireMockManager:
         self,
         url: str,
         body: str,
+        *,
+        pattern: bool = False,
+        priority: int | None = None,
     ) -> None:
-        Mappings.create_mapping(
-            Mapping(
-                request=MappingRequest(
-                    method=HttpMethods.GET,
-                    url=url,
-                ),
-                response=MappingResponse(status=200, body=body),
-                persistent=False,
-            )
+        request = MappingRequest(
+            method=HttpMethods.GET,
         )
+
+        if pattern:
+            request.url_pattern = url
+        else:
+            request.url = url
+
+        mapping = Mapping(
+            request=request,
+            response=MappingResponse(status=200, body=body),
+            persistent=False,
+        )
+
+        if priority:
+            mapping.priority = priority
+
+        Mappings.create_mapping(mapping)
 
     def add_file_mapping(
         self,

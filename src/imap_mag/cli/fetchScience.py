@@ -1,6 +1,7 @@
 """Program to retrieve and process MAG CDF files."""
 
 import typing
+from enum import Enum
 from pathlib import Path
 
 import pandas as pd
@@ -8,6 +9,16 @@ import typing_extensions
 
 from .. import appUtils
 from ..client.sdcDataAccess import ISDCDataAccess
+
+
+class MAGMode(str, Enum):
+    Normal = "norm"
+    Burst = "burst"
+
+
+class MAGSensor(str, Enum):
+    IBS = "magi"
+    OBS = "mago"
 
 
 class FetchScienceOptions(typing.TypedDict):
@@ -22,22 +33,22 @@ class FetchScienceOptions(typing.TypedDict):
 class FetchScience:
     """Manage SOC data."""
 
-    __descriptors: list[str]
-    __flavors: list[str]
+    __modes: list[MAGMode]
+    __sensor: list[MAGSensor]
 
     __data_access: ISDCDataAccess
 
     def __init__(
         self,
         data_access: ISDCDataAccess,
-        descriptors: list[str] = ["norm", "burst"],
-        flavors: list[str] = ["-magi", "-mago"],
+        modes: list[MAGMode] = ["norm", "burst"],
+        sensors: list[MAGSensor] = ["magi", "mago"],
     ) -> None:
         """Initialize SDC interface."""
 
         self.__data_access = data_access
-        self.__descriptors = descriptors
-        self.__flavors = flavors
+        self.__modes = modes
+        self.__sensor = sensors
 
     def download_latest_science(
         self, **options: typing_extensions.Unpack[FetchScienceOptions]
@@ -46,7 +57,7 @@ class FetchScience:
 
         downloaded = []
 
-        for descriptor in self.__descriptors:
+        for mode in self.__modes:
             date_range: pd.DatetimeIndex = pd.date_range(
                 start=appUtils.convertToDatetime(options["start_date"]),
                 end=appUtils.convertToDatetime(options["end_date"]),
@@ -55,10 +66,10 @@ class FetchScience:
             )
 
             for date in date_range.to_pydatetime():
-                for flavor in self.__flavors:
+                for sensor in self.__sensor:
                     file_details = self.__data_access.get_filename(
                         level=options["level"],
-                        descriptor=str(descriptor) + str(flavor),
+                        descriptor=str(mode) + "-" + str(sensor),
                         start_date=date,
                         end_date=None,
                         version="latest",
