@@ -13,14 +13,13 @@ import typer
 
 # config
 import yaml
-
-from src.imap_db.model import File
-from src.mag_toolkit import CDFLoader
-from src.mag_toolkit.calibration.CalibrationApplicator import CalibrationApplicator
-from src.mag_toolkit.calibration.calibrationFormatProcessor import (
+from imap_db.model import File
+from mag_toolkit import CDFLoader
+from mag_toolkit.calibration.CalibrationApplicator import CalibrationApplicator
+from mag_toolkit.calibration.calibrationFormatProcessor import (
     CalibrationFormatProcessor,
 )
-from src.mag_toolkit.calibration.Calibrator import (
+from mag_toolkit.calibration.Calibrator import (
     Calibrator,
     CalibratorType,
     SpinAxisCalibrator,
