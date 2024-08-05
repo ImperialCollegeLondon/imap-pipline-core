@@ -1,0 +1,2 @@
+class CalibrationValidityError(Exception):
+    pass

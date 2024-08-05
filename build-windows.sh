@@ -7,7 +7,7 @@
 mkdir -p dist
 
 docker run \
-  --volume "$(pwd):/src/" \
+  --volume "$(pwd):/src/imap_mag" \
    batonogov/pyinstaller-windows:latest \
   "rm -rf dist/pyinstaller && \
   python -m pip install poetry && \

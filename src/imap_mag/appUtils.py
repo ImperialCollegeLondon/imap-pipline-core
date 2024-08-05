@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import typer
 
-from src import appConfig
+from . import appConfig
 
 IMAP_EPOCH = np.datetime64("2010-01-01T00:00:00", "ns")
 J2000_EPOCH = np.datetime64("2000-01-01T11:58:55.816", "ns")

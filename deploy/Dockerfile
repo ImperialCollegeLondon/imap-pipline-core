@@ -11,6 +11,11 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 COPY deploy/entrypoint.sh /app/entrypoint.sh
+COPY *.yaml /app/
+
+#TODO: this is a hack mounting the src folder to the container
+COPY src/imap_mag/xtce/*.xml /app/src/imap_mag/xtce/
+
 COPY dist/python${PYTHON_VERSION}/${TOOL_PACKAGE} /app/python${PYTHON_VERSION}/
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
@@ -18,7 +23,12 @@ COPY dist/python${PYTHON_VERSION}/${TOOL_PACKAGE} /app/python${PYTHON_VERSION}/
 
 RUN adduser -u 5678 --disabled-password --gecos "" appuser && \
     chown -R appuser /app && \
+    mkdir -p /data && \
+    chown -R appuser /data && \
     chmod +x /app/entrypoint.sh
+
+# Install the postgres client and any other dependencies needed to install our app
+RUN apt-get update && apt-get install -y libpq-dev gcc
 
 WORKDIR /app
 USER appuser

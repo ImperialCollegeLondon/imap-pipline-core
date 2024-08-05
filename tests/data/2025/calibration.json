@@ -1,0 +1,27 @@
+{
+    "calibrations": [
+        {
+            "comment": null,
+            "creation_timestamp": "2024-07-26T16:51:58.212401",
+            "instrument": "MAGO",
+            "method": "CalibratorType.SPINAXIS",
+            "offsets": {
+                "X": [
+                    0.0
+                ],
+                "Y": [
+                    0.0
+                ],
+                "Z": [
+                    3.256
+                ]
+            },
+            "timestamps": [
+                "2022-03-03T00:00:00"
+            ],
+            "units": "nT"
+        }
+    ],
+    "valid_end": "2022-03-03T00:00:00",
+    "valid_start": "2022-03-03T00:00:00"
+}

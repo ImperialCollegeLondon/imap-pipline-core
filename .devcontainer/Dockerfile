@@ -13,3 +13,6 @@ ENV PATH="$PYENV_ROOT/bin:$PATH"
 RUN curl https://pyenv.run | bash
 RUN $PYENV_ROOT/bin/pyenv install -v ${PYTHON_VERSIONS}
 
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    postgresql-client

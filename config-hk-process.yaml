@@ -1,10 +1,10 @@
 source:
-  folder: tests/data/2025
+  folder: /data/hk_l0/
 
-work-folder: .work
+work-folder: /data/.work
 
 destination:
-  folder: output/
+  folder: /data/hk_l1/
   filename: result.csv
 
 packet-definition:

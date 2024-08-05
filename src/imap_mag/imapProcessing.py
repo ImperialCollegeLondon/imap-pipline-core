@@ -7,7 +7,7 @@ from pathlib import Path
 import xarray as xr
 from space_packet_parser import parser, xtcedef
 
-from src import appConfig, appUtils
+from . import appConfig, appUtils
 
 
 class FileProcessor(abc.ABC):
@@ -35,6 +35,10 @@ class HKProcessor(FileProcessor):
 
     def initialize(self, config: appConfig.AppConfig) -> None:
         self.xtcePacketDefinition = config.packet_definition.hk
+        if not self.xtcePacketDefinition.exists():
+            raise FileNotFoundError(
+                f"XTCE packet definition file not found: {self.xtcePacketDefinition}"
+            )
 
     def process(self, file: Path) -> Path:
         """Process HK with XTCE tools and create CSV file."""

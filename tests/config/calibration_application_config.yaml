@@ -5,7 +5,4 @@ work-folder: .work
 
 destination:
   folder: output/
-  filename: power.pkts
-
-packet-definition:
-  hk: src/imap_mag/xtce/tlm_20240724.xml
+  filename: L2.cdf

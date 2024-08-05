@@ -131,8 +131,7 @@ dmypy.json
 
 # mkdocs build dir
 site/
-src/main.py
 
 .work
 /output
-deploy/test-env/ssh_test_keys/
+dev.env

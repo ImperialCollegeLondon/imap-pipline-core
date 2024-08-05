@@ -1,11 +1,11 @@
 source:
   folder: tests/data/2025
 
-work-folder: .work
+work-folder: /data/science
 
 destination:
   folder: output/
-  filename: power.pkts
+  filename: result.cdf
 
 packet-definition:
   hk: src/imap_mag/xtce/tlm_20240724.xml

@@ -1,13 +1,34 @@
 #!/bin/bash
 set -e
 
+echo "Starting IMAP MAG pipeline..."
+sleep 20
+
+imap-db create-db
+
+imap-db upgrade-db
+
+echo "DB admin complete"
 
 while :
 do
-    imap-mag hello world
+    # delete all data
+    rm -rf /data/*
 
-    imap-mag fetch-binary --config tests/config/hk_download.yaml --apid 1063 --start-date 2025-05-02 --end-date 2025-05-03
-    imap-mag process --config tests/config/hk_process.yaml MAG_HSK_PW.pkts
+    START_DATE='2025-05-02'
+    END_DATE='2025-05-03'
+
+    imap-mag fetch-binary --config config-hk-download.yaml --apid 1063 --start-date $START_DATE --end-date $END_DATE
+
+    imap-mag process --config config-hk-process.yaml power.pkts
+
+    imap-mag fetch-science --level l1b  --start-date $START_DATE --end-date $END_DATE --config config-sci.yaml
+
+    imap-db query-db
+
+    imap-mag calibrate --config calibration_config.yaml --method SpinAxisCalibrator imap_mag_l1b_norm-mago_20250511_v000.cdf
+
+    imap-mag apply --config calibration_application_config.yaml --calibration calibration.json imap_mag_l1b_norm-mago_20250511_v000.cdf
 
     ls -l /data
 

@@ -6,9 +6,8 @@ import os
 from pathlib import Path
 
 import pytest
+from imap_mag.main import app
 from typer.testing import CliRunner
-
-from src.main import app
 
 runner = CliRunner()
 
@@ -33,7 +32,7 @@ def test_process_with_valid_config_does_not_error(tidyDataFolders):
         [
             "process",
             "--config",
-            "config.yml",
+            "config.yaml",
             "imap_mag_l1a_norm-mago_20250502_v000.cdf",
         ],
     )
@@ -97,4 +96,38 @@ def test_fetch_binary_downloads_hk_from_webpoda(tidyDataFolders):
 
     # Verify.
     assert result.exit_code == 0
-    assert Path("output/power.pkts").exists()
+    assert Path("output/power.pkts").exists()  #
+
+
+def test_calibration_creates_calibration_file(tidyDataFolders):
+    result = runner.invoke(
+        app,
+        [
+            "calibrate",
+            "--config",
+            "tests/config/calibration_config.yaml",
+            "--method",
+            "SpinAxisCalibrator",
+            "imap_mag_l1a_norm-mago_20250502_v000.cdf",
+        ],
+    )
+    assert result.exit_code == 0
+    assert Path("output/calibration.json").exists()
+
+
+def test_application_creates_L2_file(tidyDataFolders):
+    result = runner.invoke(
+        app,
+        [
+            "apply",
+            "--config",
+            "tests/config/calibration_application_config.yaml",
+            "--calibration",
+            "calibration.json",
+            "imap_mag_l1a_norm-mago_20250502_v000.cdf",
+        ],
+    )
+
+    print("\n" + str(result.stdout))
+    assert result.exit_code == 0
+    assert Path("output/L2.cdf").exists()
