@@ -156,7 +156,7 @@ def test_fetch_science_downloads_cdf_from_sdc(wiremock_manager):  # noqa: F811
         + ".*"
         + re.escape("&start_date=20250502&version=latest&extension=cdf"),
         json.dumps({}),
-        pattern=True,
+        is_pattern=True,
         priority=2,
     )
 

@@ -1,6 +1,8 @@
+import typing
 from pathlib import Path
 
 import pytest
+import typing_extensions
 from wiremock.client import (
     HttpMethods,
     Mapping,
@@ -10,6 +12,14 @@ from wiremock.client import (
 )
 from wiremock.constants import Config
 from wiremock.testing.testcontainer import WireMockContainer, wiremock_container
+
+
+class MappingOptions(typing.TypedDict):
+    """Options for mapping."""
+
+    is_pattern: bool
+    status: int
+    priority: int | None
 
 
 class WireMockManager:
@@ -31,34 +41,17 @@ class WireMockManager:
         self,
         url: str,
         body: str,
-        *,
-        pattern: bool = False,
-        priority: int | None = None,
+        **options: typing_extensions.Unpack[MappingOptions],
     ) -> None:
-        request = MappingRequest(
-            method=HttpMethods.GET,
-        )
+        """Add WireMock string mapping for URL."""
 
-        if pattern:
-            request.url_pattern = url
-        else:
-            request.url = url
-
-        mapping = Mapping(
-            request=request,
-            response=MappingResponse(status=200, body=body),
-            persistent=False,
-        )
-
-        if priority:
-            mapping.priority = priority
-
-        Mappings.create_mapping(mapping)
+        self.__add_mapping(url, body, is_file=False, **options)
 
     def add_file_mapping(
         self,
         url: str,
         host_path: str,
+        **options: typing_extensions.Unpack[MappingOptions],
     ) -> None:
         """Copy file to container and add WireMock mapping for it."""
 
@@ -69,18 +62,49 @@ class WireMockManager:
                 {host_path: f.read()}, container_dir_path, "wb"
             )
 
-        Mappings.create_mapping(
-            Mapping(
-                request=MappingRequest(
-                    method=HttpMethods.GET,
-                    url=url,
-                ),
-                response=MappingResponse(
-                    status=200, body_file_name=Path(host_path).name
-                ),
-                persistent=False,
-            )
+        self.__add_mapping(url, Path(host_path).name, is_file=True, **options)
+
+    def add_mapping(mapping: Mapping) -> None:
+        """Add WireMock mapping for URL."""
+
+        Mappings.create_mapping(mapping)
+
+    def __add_mapping(
+        self,
+        url: str,
+        body: str,
+        *,
+        is_file: bool,
+        **options: typing_extensions.Unpack[MappingOptions],
+    ) -> None:
+        request = MappingRequest(
+            method=HttpMethods.GET,
         )
+
+        if options["is_pattern"] if "is_pattern" in options else False:
+            request.url_pattern = url
+        else:
+            request.url = url
+
+        response = MappingResponse(
+            status=options["status"] if "status" in options else 200
+        )
+
+        if is_file:
+            response.body_file_name = body
+        else:
+            response.body = body
+
+        mapping = Mapping(
+            request=request,
+            response=response,
+            persistent=False,
+        )
+
+        if (options["priority"] if "priority" in options else None) is not None:
+            mapping.priority = options["priority"]
+
+        Mappings.create_mapping(mapping)
 
 
 @pytest.fixture(scope="session", autouse=False)
