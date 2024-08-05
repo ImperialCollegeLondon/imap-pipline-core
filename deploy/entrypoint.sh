@@ -22,7 +22,7 @@ do
 
     imap-mag process --config config-hk-process.yaml power.pkts
 
-    imap-mag fetch-science --level l1b  --start-date $START_DATE --end-date $END_DATE --config config-sci.yaml
+    imap-mag fetch-science --level l1b --start-date $START_DATE --end-date $END_DATE --config config-sci.yaml
 
     imap-db query-db
 

@@ -7,7 +7,7 @@ import typing
 from datetime import datetime
 
 import imap_data_access
-from typing_extensions import Unpack
+import typing_extensions
 
 
 class FileOptions(typing.TypedDict):
@@ -37,12 +37,14 @@ class QueryOptions(typing.TypedDict):
     extension: str | None
 
 
-class ISDCApiClient(abc.ABC):
+class ISDCDataAccess(abc.ABC):
     """Interface for interacting with imap-data-access."""
 
     @staticmethod
     @abc.abstractmethod
-    def get_file_path(**options: Unpack[FileOptions]) -> tuple[str, str]:
+    def get_file_path(
+        **options: typing_extensions.Unpack[FileOptions],
+    ) -> tuple[str, str]:
         """Get file path for data from imap-data-access."""
         pass
 
@@ -52,20 +54,15 @@ class ISDCApiClient(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def unique_version(
-        self, **options: Unpack[VersionOptions]
-    ) -> tuple[str, str | None]:
-        """Determine a unique version for the data by querying imap_data_access."""
-        pass
-
-    @abc.abstractmethod
-    def query(self, **options: Unpack[QueryOptions]) -> list[dict[str, str]]:
+    def query(
+        self, **options: typing_extensions.Unpack[QueryOptions]
+    ) -> list[dict[str, str]]:
         """Download data from imap-data-access."""
         pass
 
     @abc.abstractmethod
     def get_filename(
-        self, **options: Unpack[FileOptions]
+        self, **options: typing_extensions.Unpack[FileOptions]
     ) -> list[dict[str, str]] | None:
         """Wait for file to be available in imap-data-access."""
         pass
@@ -76,16 +73,21 @@ class ISDCApiClient(abc.ABC):
         pass
 
 
-class SDCApiClient(ISDCApiClient):
+class SDCDataAccess(ISDCDataAccess):
     """Class for uploading and downloading MAG data via imap-data-access."""
 
-    def __init__(self, data_dir: str) -> None:
+    def __init__(self, data_dir: str, sdc_url: str | None = None) -> None:
+        """Initialize SDC API client."""
+
         imap_data_access.config["DATA_DIR"] = pathlib.Path(data_dir)
+        imap_data_access.config["DATA_ACCESS_URL"] = (
+            sdc_url or "https://api.dev.imap-mission.com"
+        )
 
     @staticmethod
-    def get_file_path(**options: Unpack[FileOptions]) -> tuple[str, str]:
-        """Get file path for data from imap-data-access."""
-
+    def get_file_path(
+        **options: typing_extensions.Unpack[FileOptions],
+    ) -> tuple[str, str]:
         science_file = imap_data_access.ScienceFilePath.generate_from_inputs(
             instrument="mag",
             data_level=options["level"],
@@ -97,45 +99,17 @@ class SDCApiClient(ISDCApiClient):
         return (science_file.filename, science_file.construct_path())
 
     def upload(self, file_name: str) -> None:
-        """Upload data to imap-data-access."""
-
         logging.debug(f"Uploading {file_name} to imap-data-access.")
 
         try:
             imap_data_access.upload(file_name)
         except imap_data_access.io.IMAPDataAccessError as e:
-            logging.warn(f"Upload failed: {e}")
+            logging.error(f"Upload failed: {e}")
+            raise e
 
-    def unique_version(
-        self, **options: Unpack[VersionOptions]
-    ) -> tuple[str, str | None]:
-        """Determine a unique version for the data by querying imap_data_access."""
-
-        files: list[dict[str, str]] = self.query(
-            **options,
-            descriptor=None,
-            end_date=options["start_date"],
-            version=None,
-            extension=None,
-        )
-
-        if not files:
-            logging.debug(f"No existing files found for {options}.")
-            return ("v000", None)
-
-        max_version: str = max(files, key=lambda x: x["version"])["version"]
-        unique_version: str = f"v{int(max_version[1:]) + 1:03d}"
-
-        logging.debug(
-            f"Existing files found, using: unique={unique_version}, "
-            f"previous={max_version}."
-        )
-
-        return (unique_version, max_version)
-
-    def query(self, **options: Unpack[QueryOptions]) -> list[dict[str, str]]:
-        """Download data from imap-data-access."""
-
+    def query(
+        self, **options: typing_extensions.Unpack[QueryOptions]
+    ) -> list[dict[str, str]]:
         return imap_data_access.query(
             instrument="mag",
             data_level=options["level"],
@@ -153,25 +127,15 @@ class SDCApiClient(ISDCApiClient):
         )
 
     def get_filename(
-        self, **options: Unpack[FileOptions]
+        self, **options: typing_extensions.Unpack[FileOptions]
     ) -> list[dict[str, str]] | None:
-        science_file = imap_data_access.ScienceFilePath.generate_from_inputs(
-            instrument="mag",
-            data_level=options["level"],
-            descriptor=options["descriptor"],
-            start_time=options["start_date"].strftime("%Y%m%d"),
-            version=options["version"],
-        )
+        file_details: list[dict[str, str]] = self.query(**options)
 
-        file_name: list[dict[str, str]] = self.query(**options)
+        file_names: str = ", ".join([value["file_path"] for value in file_details])
+        logging.info(f"Found {len(file_details)} matching files:\n{file_names}")
 
-        logging.info(f"File {science_file.filename} generated.")
-
-        return file_name
+        return file_details
 
     def download(self, file_name: str) -> pathlib.Path:
-        """Download data from imap-data-access."""
-
         logging.debug(f"Downloading {file_name} from imap-data-access.")
-
         return pathlib.Path(imap_data_access.download(file_name))

@@ -27,8 +27,10 @@ from src.mag_toolkit.calibration.Calibrator import (
     SpinPlaneCalibrator,
 )
 
-from . import DB, SDC, appConfig, appLogging, appUtils, imapProcessing, webPODA
-from .sdcApiClient import SDCApiClient
+from . import DB, appConfig, appLogging, appUtils, imapProcessing
+from .cli.fetchScience import FetchScience
+from .client.sdcDataAccess import SDCDataAccess
+from .client.webPODA import WebPODA
 
 app = typer.Typer()
 globalState = {"verbose": False}
@@ -48,7 +50,7 @@ def commandInit(config: Path) -> appConfig.AppConfig:
         logging.critical("Config %s is a directory, need a yml file", config)
         raise typer.Abort()
     elif not config.exists():
-        logging.critical("The config at $s does not exist", config)
+        logging.critical("The config at %s does not exist", config)
         raise typer.Abort()
     else:
         pass
@@ -181,7 +183,11 @@ def fetch_binary(
     packet: str = appUtils.getPacketFromApID(apid)
     logging.info(f"Downloading raw packet {packet} from {start_date} to {end_date}.")
 
-    poda = webPODA.WebPODA(auth_code, configFile.work_folder)
+    poda = WebPODA(
+        auth_code,
+        configFile.work_folder,
+        configFile.api.webpoda_url if configFile.api else None,
+    )
     result: str = poda.download(
         packet=packet,
         start_date=appUtils.convertToDatetime(start_date),
@@ -213,10 +219,6 @@ def fetch_science(
     level: Annotated[
         LevelEnum, typer.Option(help="Level to download")
     ] = LevelEnum.level_2,
-    force: Annotated[
-        bool,
-        typer.Option("--force", "-f", help="Force download even if the file exists"),
-    ] = False,
     config: Annotated[Path, typer.Option()] = Path("config-sci.yaml"),
 ):
     configFile: appConfig.AppConfig = commandInit(config)
@@ -227,26 +229,28 @@ def fetch_science(
 
     logging.info(f"Downloading {level} science from {start_date} to {end_date}.")
 
-    data_access = SDCApiClient(data_dir=str(configFile.work_folder))
+    data_access = SDCDataAccess(
+        data_dir=str(configFile.work_folder),
+        sdc_url=configFile.api.sdc_url if configFile.api else None,
+    )
 
-    sdc = SDC.SDC(data_access)
-
-    # TODO: any better way than passing a dictionary? Strongly typed?
-    files = sdc.QueryAndDownload(
-        level=level.value, start_date=start_date, end_date=end_date, force=force
+    fetch_science = FetchScience(data_access)
+    files = fetch_science.download_latest_science(
+        level=level.value, start_date=start_date, end_date=end_date
     )
 
     records = []
     for file in files:
         records.append(File(name=file.name, path=file.absolute().as_posix()))
 
-    db = DB.DB()
-    db.insert_files(records)
+    for file in files:
+        appUtils.copyFileToDestination(file, configFile.destination)
 
-    logging.info(f"Downloaded {len(files)} files and saved to database")
+    if configFile.destination.export_to_database:
+        db = DB.DB()
+        db.insert_files(records)
 
-    # for file in files:
-    #     appUtils.copyFileToDestination(file, configFile.destination)
+        logging.info(f"Downloaded {len(files)} files and saved to database")
 
 
 # imap-mag calibrate --config calibration_config.yaml --method SpinAxisCalibrator imap_mag_l1b_norm-mago_20250502_v000.cdf
