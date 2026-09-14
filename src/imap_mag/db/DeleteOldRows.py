@@ -35,6 +35,15 @@ async def delete_old_rows(
     db_url = await get_database_connectionstring(
         app_settings, config.database_url_env_var_or_block_name
     )
+
+    # `get_database_connectionstring` strips the psycopg driver suffix so the URL
+    # can be handed to crump (used by the postgres-upload flow), which expects a bare
+    # "postgresql://" scheme. This module talks to the database directly through
+    # SQLAlchemy/`Database`, though, which needs the driver specified explicitly -
+    # otherwise SQLAlchemy defaults to psycopg2, which isn't installed in this project.
+    if db_url.startswith("postgresql://"):
+        db_url = db_url.replace("postgresql://", "postgresql+psycopg://", 1)
+
     db = Database(db_url)
 
     total_deleted = 0
