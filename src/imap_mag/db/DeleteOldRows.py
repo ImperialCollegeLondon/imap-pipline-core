@@ -47,10 +47,15 @@ async def delete_old_rows(
     db = Database(db_url)
 
     total_deleted = 0
-    with db.engine.begin() as connection:
-        for task in config.tasks:
-            try:
-                cutoff = datetime_provider.now() - timedelta(days=task.threshold_days)
+    for task in config.tasks:
+        try:
+            cutoff = datetime_provider.now() - timedelta(days=task.threshold_days)
+            # Each task gets its own transaction. Postgres aborts the entire
+            # transaction as soon as one statement fails (e.g. a missing table),
+            # so sharing a single transaction across tasks would cause every
+            # subsequent task to fail with "current transaction is aborted",
+            # even though we've already handled/logged the earlier failure.
+            with db.engine.begin() as connection:
                 if dry_run:
                     statement = text(
                         f'SELECT COUNT(*) FROM "{task.table}" WHERE "{task.datetime_column}" < :cutoff'
@@ -74,12 +79,11 @@ async def delete_old_rows(
                     )
                     total_deleted += result.rowcount
 
-            except ProgrammingError as e:
-                if isinstance(e.orig, UndefinedTable):
-                    logger.warning(
-                        f"Table '{task.table}' does not exist - nothing to delete"
-                    )
-                else:
-                    db.engine.dispose()
-                    raise
+        except ProgrammingError as e:
+            if isinstance(e.orig, UndefinedTable):
+                logger.warning(
+                    f"Table '{task.table}' does not exist - nothing to delete"
+                )
+            else:
+                raise
     return total_deleted
