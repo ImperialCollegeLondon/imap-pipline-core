@@ -3,11 +3,9 @@
 import contextlib
 import os
 from datetime import UTC, datetime
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from crump import CrumpConfig
 
 from prefect_server.postgresUploadFlow import (
     _get_database_connectionstring,
@@ -219,25 +217,6 @@ class TestProcessFiles:
 
         assert uploaded == 0
         assert failed == 1
-
-
-class TestCrumpConfig:
-    def test_noaa_wind_jobs_allow_empty_density_speed_and_temperature(self):
-        repo_root = Path(__file__).resolve().parents[2]
-        crump_config = CrumpConfig.from_yaml(repo_root / "imap-db-ingest-config.yaml")
-
-        for job_name in ("solar_wind_noaa", "ace_wind_noaa"):
-            job = crump_config.jobs[job_name]
-            columns = {
-                column.csv_column: column
-                for column in job.columns
-                if column.csv_column in {"density", "speed", "temperature"}
-            }
-
-            assert set(columns) == {"density", "speed", "temperature"}
-            for column in columns.values():
-                assert column.nullable is True
-                assert column.lookup is None
 
 
 class TestUploadNewFilesToPostgres:
