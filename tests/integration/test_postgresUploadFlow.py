@@ -233,8 +233,17 @@ def insert_test_files_into_database(
         version = int(file_path.stem.split("_v")[-1]) if "_v" in file_path.stem else 1
         # Extract date from filename (e.g., 20251101 -> 2025-11-01)
         date_str = next(
-            part for part in reversed(file_path.stem.split("_")) if len(part) == 8
+            (
+                part
+                for part in reversed(file_path.stem.split("_"))
+                if len(part) == 8 and part.isdigit()
+            ),
+            None,
         )
+        if date_str is None:
+            raise ValueError(
+                f"Could not find YYYYMMDD date in filename {file_path.name}"
+            )
         content_date = datetime(
             int(date_str[:4]),
             int(date_str[4:6]),
