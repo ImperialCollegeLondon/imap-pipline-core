@@ -237,7 +237,7 @@ class TestCrumpConfig:
             assert set(columns) == {"density", "speed", "temperature"}
             for column in columns.values():
                 assert column.nullable is True
-                assert column.lookup == {"": None}
+                assert column.lookup is None
 
 
 class TestUploadNewFilesToPostgres:
