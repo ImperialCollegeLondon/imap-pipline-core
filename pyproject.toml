@@ -33,7 +33,7 @@ dependencies = [
     "spacepy>=0.7.0",
     "pydantic-settings>=2.15.0",
     "ccsdspy>=2.0.0",
-    "crump>=0.7.1",
+    "crump==0.7.1",
     "prefect-managedfiletransfer>=0.6.2",
     "ialirt-data-access>=0.6.0",
     "apprise>=1.13.1",
