@@ -226,6 +226,15 @@ async def test_upload_new_files_to_postgres_allows_empty_noaa_wind_values(
 def insert_test_files_into_database(
     test_database, test_files, app_settings, datastore_root=DATASTORE
 ):
+    def is_yyyymmdd_date_part(part: str) -> bool:
+        if len(part) != 8 or not part.isdigit():
+            return False
+        try:
+            datetime.strptime(part, "%Y%m%d")
+        except ValueError:
+            return False
+        return True
+
     last_modified_date = datetime(2026, 1, 1, tzinfo=UTC)
     for file_path_str in test_files:
         file_path = datastore_root / file_path_str
@@ -236,7 +245,7 @@ def insert_test_files_into_database(
             (
                 part
                 for part in reversed(file_path.stem.split("_"))
-                if len(part) == 8 and part.isdigit()
+                if is_yyyymmdd_date_part(part)
             ),
             None,
         )
@@ -244,12 +253,7 @@ def insert_test_files_into_database(
             raise ValueError(
                 f"Could not find YYYYMMDD date in filename {file_path.name}"
             )
-        content_date = datetime(
-            int(date_str[:4]),
-            int(date_str[4:6]),
-            int(date_str[6:8]),
-            tzinfo=UTC,
-        )
+        content_date = datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=UTC)
         last_modified_date += timedelta(seconds=1)
         file = File.from_file(
             file_path,
